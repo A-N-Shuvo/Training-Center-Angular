@@ -1,0 +1,71 @@
+
+<div class="box">
+  <div class="login">
+    <div class="loginBx">
+      <h2><i>Register</i></h2>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" style="width: 100%;">
+
+        <input type="text"
+               formControlName="fullName"
+               placeholder="User Full Name"
+               required />
+        <div *ngIf="registerForm.get('fullName')?.hasError('required')" style="color: #ff2770; font-size: 0.8em;">
+          User full name is required
+        </div>
+
+        <input type="text"
+               formControlName="username"
+               placeholder="Username"
+               required />
+        <div *ngIf="registerForm.get('username')?.hasError('required')" style="color: #ff2770; font-size: 0.8em;">
+          Username is required
+        </div>
+
+        <input type="email"
+               formControlName="email"
+               placeholder="Email"
+               required />
+        <div *ngIf="registerForm.get('email')?.hasError('required')" style="color: #ff2770; font-size: 0.8em;">
+          Email is required
+        </div>
+        <div *ngIf="registerForm.get('email')?.hasError('email')" style="color: #ff2770; font-size: 0.8em;">
+          Please enter a valid email
+        </div>
+
+        <input type="text"
+               formControlName="contactNo"
+               placeholder="Contact No"
+               required />
+        <div *ngIf="registerForm.get('contactNo')" style="color: #ff2770; font-size: 0.8em;">
+        </div>
+
+
+        <input type="password"
+               formControlName="password"
+               placeholder="Password"
+               required />
+        <div *ngIf="registerForm.get('password')?.hasError('required')" style="color: #ff2770; font-size: 0.8em;">
+          Password is required
+        </div>
+        <div *ngIf="registerForm.get('password')?.hasError('minlength')" style="color: #ff2770; font-size: 0.8em;">
+          Password must be at least 6 characters
+        </div>
+
+        <div *ngIf="errorMessage" style="color: red; font-size: 0.9em;">
+          {{ errorMessage }}
+        </div>
+
+        <div *ngIf="successMessage" style="color: #45f3ff; font-size: 0.9em;">
+          {{ successMessage }}
+        </div>
+
+        <input type="submit" value="Register" [disabled]="registerForm.invalid" />
+
+        <div class="group">
+          <a routerLink="/login">Already have an account?</a>
+          <a routerLink="/login">Login</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

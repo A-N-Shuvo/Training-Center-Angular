@@ -1,0 +1,475 @@
+<!--<div class="container-fluid">
+  <div class="row p-2 bg-info">
+    <div class="col-6">
+      <h3>Classroom Management</h3>
+    </div>
+    <div class="col-6 text-end">
+      <button class="btn btn-warning" (click)="openModal()">Add New Classroom</button>
+    </div>
+  </div>-->
+<!-- Items per page selector -->
+<!--<div class="row mt-3">
+  <div class="col-md-6">
+    <div class="input-group mb-3">
+      <label class="input-group-text" for="itemsPerPage">Items per page:</label>
+      <select class="form-select" id="itemsPerPage" (change)="onItemsPerPageChange($event)">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+</div>-->
+<!-- Classroom List Table -->
+<!--<table class="table table-striped mt-3" *ngIf="paginatedClassrooms && paginatedClassrooms.length > 0; else noData">
+  <thead>
+    <tr>
+      <th>SL No</th>
+      <th>Room Name</th>
+      <th>Location</th>
+      <th>Capacity</th>
+      <th>Facilities</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let classroom of paginatedClassrooms; let i = index">
+      <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+      <td>{{ classroom.roomName }}</td>
+      <td>{{ classroom.location }}</td>
+      <td>{{ classroom.seatCapacity }}</td>
+      <td>
+        <span *ngIf="classroom.hasProjector">Projector </span>
+        <span *ngIf="classroom.hasAirConditioning">AC </span>
+        <span *ngIf="classroom.hasWhiteboard">Whiteboard </span>
+        <span *ngIf="classroom.hasSoundSystem">Sound </span>
+        <span *ngIf="classroom.hasInternetAccess">Internet</span>
+      </td>
+      <td>
+        <span [class]="classroom.isActive ? 'badge bg-success' : 'badge bg-danger'">
+          {{ classroom.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </td>
+      <td>
+        <button class="btn btn-sm btn-info me-1" (click)="onDetails(classroom)">Details</button>
+        <button class="btn btn-sm btn-warning me-1" (click)="onEdit(classroom)">Edit</button>
+        <button class="btn btn-sm btn-danger" (click)="onDelete(classroom)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>-->
+<!-- Pagination controls -->
+<!--<nav aria-label="Page navigation" *ngIf="totalPages > 1">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <a class="page-link" href="javascript:void(0)" (click)="changePage(currentPage - 1)">Previous</a>
+    </li>
+
+    <li class="page-item" *ngFor="let page of pageNumbers" [class.active]="page === currentPage">
+      <a class="page-link" href="javascript:void(0)" (click)="changePage(page)">{{ page }}</a>
+    </li>
+
+    <li class="page-item" [class.disabled]="currentPage === totalPages">
+      <a class="page-link" href="javascript:void(0)" (click)="changePage(currentPage + 1)">Next</a>
+    </li>
+  </ul>
+</nav>
+
+<ng-template #noData>
+  <h5 class="text-center p-5">No Classrooms Found</h5>
+</ng-template>-->
+<!-- Classroom Modal -->
+<!--<div class="modal" id="classroomModal" #classroomModal>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h4 class="modal-title">
+          {{ classroomForm.value.classRoomId === 0 ? 'Add Classroom' : 'Update Classroom' }}
+        </h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="closeModal()"></button>
+      </div>
+
+      <form [formGroup]="classroomForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <input type="hidden" formControlName="classRoomId">
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Room Name*</label>
+              <input type="text" class="form-control" formControlName="roomName" placeholder="Enter room name">
+              <div *ngIf="classroomForm.get('roomName')?.invalid && classroomForm.get('roomName')?.touched" class="text-danger">
+                Room name is required (max 100 characters)
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Seat Capacity*</label>
+              <input type="number" class="form-control" formControlName="seatCapacity" placeholder="Enter seat capacity">
+              <div *ngIf="classroomForm.get('seatCapacity')?.invalid && classroomForm.get('seatCapacity')?.touched" class="text-danger">
+                Capacity must be between 1-500
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label class="form-label">Location*</label>
+              <input type="text" class="form-control" formControlName="location" placeholder="Enter location">
+              <div *ngIf="classroomForm.get('location')?.invalid && classroomForm.get('location')?.touched" class="text-danger">
+                Location is required (max 200 characters)
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Facilities</label>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="hasProjector">
+                <label class="form-check-label">Projector</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="hasAirConditioning">
+                <label class="form-check-label">Air Conditioning</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="hasWhiteboard">
+                <label class="form-check-label">Whiteboard</label>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-check mt-4">
+                <input type="checkbox" class="form-check-input" formControlName="hasSoundSystem">
+                <label class="form-check-label">Sound System</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="hasInternetAccess">
+                <label class="form-check-label">Internet Access</label>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Remarks</label>
+                <input type="text" formControlName="remarks" class="form-control" placeholder="Remarks">
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="isActive">
+                <label class="form-check-label">Is Active</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label class="form-label">Additional Facilities</label>
+              <textarea class="form-control" formControlName="additionalFacilities" rows="2" placeholder="Enter any additional facilities"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" [disabled]="classroomForm.invalid">
+            {{ classroomForm.value.classRoomId === 0 ? 'Save' : 'Update' }}
+          </button>
+          <button type="button" class="btn btn-danger" (click)="closeModal()">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>-->
+<!-- Details Modal -->
+<!--<div class="modal" id="detailsModal" #detailsModal>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-secondary text-white">
+          <h4 class="modal-title">Classroom Details</h4>
+          <button type="button" class="btn-close" (click)="closeDetailsModal()"></button>
+        </div>
+        <div class="modal-body" *ngIf="selectedClassroom">
+          <p><strong>Room Name:</strong> {{ selectedClassroom.roomName }}</p>
+          <p><strong>Location:</strong> {{ selectedClassroom.location }}</p>
+          <p><strong>Seat Capacity:</strong> {{ selectedClassroom.seatCapacity }}</p>
+          <p>
+            <strong>Facilities:</strong>
+            <span *ngIf="selectedClassroom.hasProjector">Projector, </span>
+            <span *ngIf="selectedClassroom.hasAirConditioning">AC, </span>
+            <span *ngIf="selectedClassroom.hasWhiteboard">Whiteboard, </span>
+            <span *ngIf="selectedClassroom.hasSoundSystem">Sound System, </span>
+            <span *ngIf="selectedClassroom.hasInternetAccess">Internet</span>
+          </p>
+          <p><strong>Status:</strong> {{ selectedClassroom.isActive ? 'Active' : 'Inactive' }}</p>
+          <p><strong>Additional Facilities:</strong> {{ selectedClassroom.additionalFacilities || 'None' }}</p>
+          <p><strong>Remarks:</strong> {{ selectedClassroom.remarks }}</p>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" (click)="closeDetailsModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>-->
+
+
+
+
+<div class="container-fluid">
+  <!-- Header Row -->
+  <div class="row p-2 bg-info align-items-center">
+    <div class="col-md-4">
+      <h3>Classroom Management</h3>
+    </div>
+    <div class="col-md-4">
+      <!-- Centered Search Bar -->
+    </div>
+    <div class="col-md-4 text-end">
+      <button class="btn btn-warning" (click)="openModal()">Add Classroom</button>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-1 p-2">
+    <div class="d-flex align-items-center">
+      <label class="me-2 mb-0">Items per page:</label>
+      <select class="form-select w-auto" [(ngModel)]="itemsPerPage">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+
+    <!-- Add this dropdown filter -->
+    <div class="d-flex align-items-center ms-3">
+      <label class="me-2 mb-0">Search by:</label>
+      <select class="form-select me-2" [(ngModel)]="searchBy" style="width: 150px;">
+        <option value="roomName">Room Name</option>
+        <option value="location">Location</option>
+        <option value="seatCapacity">Seat Capacity</option>
+        <!--<option value="isActive">Status</option>-->
+      </select>
+    </div>
+
+    <div class="d-flex align-items-center ms-3">
+      <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchText"
+             (input)="applyFilter()" style="width: 250px;">
+    </div>
+  </div>
+
+  @if (filteredList && filteredList.length > 0) {
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>SL No</th>
+        <th (click)="sort('roomName')" class="sortable">
+          Room Name
+          <span *ngIf="sortColumn === 'roomName'">
+            {{ sortDirection === 'asc' ? '↑' : '↓' }}
+          </span>
+        </th>
+        <th (click)="sort('location')" class="sortable">
+          Location
+          <span *ngIf="sortColumn === 'location'">
+            {{ sortDirection === 'asc' ? '↑' : '↓' }}
+          </span>
+        </th>
+        <th (click)="sort('seatCapacity')" class="sortable">
+          Capacity
+          <span *ngIf="sortColumn === 'seatCapacity'">
+            {{ sortDirection === 'asc' ? '↑' : '↓' }}
+          </span>
+        </th>
+        <th>Facilities</th>
+        <th (click)="sort('isActive')" class="sortable">
+          Status
+          <span *ngIf="sortColumn === 'isActive'">
+            {{ sortDirection === 'asc' ? '↑' : '↓' }}
+          </span>
+        </th>
+        <th class="text-center">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (classroom of filteredList | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; track $index) {
+      <tr>
+        <td>{{ (p - 1) * itemsPerPage + $index + 1 }}</td>
+        <td>{{ classroom.roomName }}</td>
+        <td>{{ classroom.location }}</td>
+        <td>{{ classroom.seatCapacity }}</td>
+        <td>
+          <span *ngIf="classroom.hasProjector">Projector </span>
+          <span *ngIf="classroom.hasAirConditioning">AC </span>
+          <span *ngIf="classroom.hasWhiteboard">Whiteboard </span>
+          <span *ngIf="classroom.hasSoundSystem">Sound </span>
+          <span *ngIf="classroom.hasInternetAccess">Internet</span>
+        </td>
+        <td>
+          <span [class]="classroom.isActive ? 'badge bg-success' : 'badge bg-danger'">
+            {{ classroom.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </td>
+        <td class="text-center">
+          <button class="btn btn-info" (click)="onDetails(classroom)">Details</button> ||
+          <button class="btn btn-primary" (click)="onEdit(classroom)">Edit</button> ||
+          <button class="btn btn-danger" (click)="onDelete(classroom)">Delete</button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-center">
+    <pagination-controls (pageChange)="p = $event"
+                         previousLabel="Prev"
+                         nextLabel="Next"
+                         [maxSize]="5"
+                         [responsive]="true">
+    </pagination-controls>
+  </div>
+  } @else {
+  <h5 class="text-center p-5">No Classrooms Found</h5>
+  }
+</div>
+
+<!-- Classroom Modal -->
+<div class="modal" id="classroomModal" #classroomModal>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-info">
+        @if(classroomForm.value.classRoomId != 0) {
+        <h4 class="modal-title">Update Classroom</h4>
+        } @else {
+        <h4 class="modal-title">Add Classroom</h4>
+        }
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <form [formGroup]="classroomForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <input type="hidden" formControlName="classRoomId">
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label>Room Name</label>
+              <input type="text" formControlName="roomName" class="form-control" placeholder="Enter room name">
+              @if (classroomForm.get('roomName')?.invalid && (classroomForm.get('roomName')?.dirty || classroomForm.get('roomName')?.touched)) {
+              <div class="text-danger">Room name is required (max 100 characters)</div>
+              }
+            </div>
+            <div class="col-md-6">
+              <label>Seat Capacity</label>
+              <input type="number" formControlName="seatCapacity" class="form-control" placeholder="Enter seat capacity">
+              @if (classroomForm.get('seatCapacity')?.invalid && (classroomForm.get('seatCapacity')?.dirty || classroomForm.get('seatCapacity')?.touched)) {
+              <div class="text-danger">Capacity must be between 1-500</div>
+              }
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label>Location</label>
+              <input type="text" formControlName="location" class="form-control" placeholder="Enter location">
+              @if (classroomForm.get('location')?.invalid && (classroomForm.get('location')?.dirty || classroomForm.get('location')?.touched)) {
+              <div class="text-danger">Location is required (max 200 characters)</div>
+              }
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label>Facilities</label>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="hasProjector">
+                <label class="form-check-label">Projector</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="hasAirConditioning">
+                <label class="form-check-label">Air Conditioning</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="hasWhiteboard">
+                <label class="form-check-label">Whiteboard</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-check mt-4">
+                <input type="checkbox" class="form-check-input" formControlName="hasSoundSystem">
+                <label class="form-check-label">Sound System</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="hasInternetAccess">
+                <label class="form-check-label">Internet Access</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" formControlName="isActive">
+                <label class="form-check-label">Is Active</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label>Additional Facilities</label>
+              <textarea formControlName="additionalFacilities" rows="3" class="form-control" placeholder="Enter additional facilities"></textarea>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label>Remarks</label>
+              <input type="text" formControlName="remarks" class="form-control" placeholder="Enter remarks">
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          @if (classroomForm.value.classRoomId == 0) {
+          <button type="submit" [disabled]="classroomForm.invalid" class="btn btn-primary">
+            Save
+          </button>
+          } @else {
+          <button type="submit" [disabled]="classroomForm.invalid" class="btn btn-success">
+            Update
+          </button>
+          }
+          <button type="button" class="btn btn-danger" (click)="closeModal()">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal" id="detailsModal" #detailsModal>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h4 class="modal-title">Classroom Details</h4>
+        <button type="button" class="btn-close" (click)="closeDetailsModal()"></button>
+      </div>
+      <div class="modal-body" *ngIf="selectedClassroom">
+        <p><strong>Room Name:</strong> {{ selectedClassroom.roomName }}</p>
+        <p><strong>Location:</strong> {{ selectedClassroom.location }}</p>
+        <p><strong>Seat Capacity:</strong> {{ selectedClassroom.seatCapacity }}</p>
+        <p>
+          <strong>Facilities:</strong>
+          <span *ngIf="selectedClassroom.hasProjector">Projector </span>
+          <span *ngIf="selectedClassroom.hasAirConditioning">AC </span>
+          <span *ngIf="selectedClassroom.hasWhiteboard">Whiteboard </span>
+          <span *ngIf="selectedClassroom.hasSoundSystem">Sound </span>
+          <span *ngIf="selectedClassroom.hasInternetAccess">Internet</span>
+        </p>
+        <p>
+          <strong>Status:</strong>
+          <span [class]="selectedClassroom.isActive ? 'badge bg-success' : 'badge bg-danger'">
+            {{ selectedClassroom.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </p>
+        <p><strong>Additional Facilities:</strong> {{ selectedClassroom.additionalFacilities || 'None' }}</p>
+        <p><strong>Remarks:</strong> {{ selectedClassroom.remarks || 'None' }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-dark" (click)="closeDetailsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
