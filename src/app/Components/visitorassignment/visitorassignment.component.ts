@@ -3,7 +3,7 @@ import { VisitorService } from '../../Services/visitor.service';
 import { Visitor, Employee } from '../../Models/visitor';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { VisitorEmployee } from '../../Models/visitor-employee';
+import {  VisitorTransfer_Junction } from '../../Models/visitor-employee';
 
 @Component({
   selector: 'app-visitor-assignment',
@@ -13,6 +13,7 @@ import { VisitorEmployee } from '../../Models/visitor-employee';
   styleUrl: './visitorassignment.component.css',
 })
 export class VisitorAssignmentComponent implements OnInit {
+  visitorsFromSearch: Visitor[] = []; // For search results in records section
   unavailableEmployees: Employee[] = [];
   availableEmployees: Employee[] = [];
   selectedUnavailableEmployeeId: number = 0;
@@ -35,7 +36,7 @@ export class VisitorAssignmentComponent implements OnInit {
   showAvailableDropdown = false;
   hoveredAvailable: number = -1;
 
-  newAssignment: VisitorEmployee = {
+  newAssignment: VisitorTransfer_Junction = {
     visitorId: 0,
     employeeId: 0,
     createdDate: new Date(),
@@ -43,6 +44,7 @@ export class VisitorAssignmentComponent implements OnInit {
     notes: '',
     userName: ''
   };
+
 
   constructor(private visitorService: VisitorService, private eRef: ElementRef) { }
 
@@ -57,14 +59,27 @@ export class VisitorAssignmentComponent implements OnInit {
     });
   }
 
+  //searchVisitors() {
+  //  if (!this.visitorSearchTerm) {
+  //    this.filteredVisitors = [];
+  //    return;
+  //  }
+
+  //  const term = this.visitorSearchTerm.toLowerCase();
+  //  this.filteredVisitors = this.allVisitors.filter(v =>
+  //    v.visitorName.toLowerCase().includes(term) ||
+  //    v.contactNo.includes(term)
+  //  );
+  //}
+
   searchVisitors() {
     if (!this.visitorSearchTerm) {
-      this.filteredVisitors = [];
+      this.visitorsFromSearch = [];
       return;
     }
 
     const term = this.visitorSearchTerm.toLowerCase();
-    this.filteredVisitors = this.allVisitors.filter(v =>
+    this.visitorsFromSearch = this.allVisitors.filter(v =>
       v.visitorName.toLowerCase().includes(term) ||
       v.contactNo.includes(term)
     );
@@ -112,24 +127,55 @@ export class VisitorAssignmentComponent implements OnInit {
   }
 
 
+  //selectVisitor(visitor: Visitor) {
+  //  // In your selectVisitor method:
+
+  //    this.visitorService.getVisitorWithHistory(visitor.visitorId).subscribe({
+  //      next: (details) => {
+  //        // Normalize contact number property
+  //        this.selectedVisitorDetails = {
+  //          ...details,
+  //          contactNo: details.contactNo || details.contactNumber
+  //        };
+  //      },
+  //      // ... error handling
+  //    });
+
+  //  this.selectedVisitor = visitor;
+  //  this.visitorSearchTerm = `${visitor.visitorName} - ${visitor.contactNo}`;
+  //  this.filteredVisitors = [];
+  //  this.showVisitorDetails(visitor.visitorId);
+  //}
+
   selectVisitor(visitor: Visitor) {
-    // In your selectVisitor method:
-   
-      this.visitorService.getVisitorWithHistory(visitor.visitorId).subscribe({
-        next: (details) => {
-          // Normalize contact number property
-          this.selectedVisitorDetails = {
-            ...details,
-            contactNo: details.contactNo || details.contactNumber
-          };
-        },
-        // ... error handling
-      });
-    
     this.selectedVisitor = visitor;
     this.visitorSearchTerm = `${visitor.visitorName} - ${visitor.contactNo}`;
-    this.filteredVisitors = [];
-    this.showVisitorDetails(visitor.visitorId);
+    this.visitorsFromSearch = [];
+
+    // Load basic visitor details
+    this.visitorService.getVisitorById(visitor.visitorId).subscribe({
+      next: (visitorDetails) => {
+        this.selectedVisitorDetails = {
+          ...visitorDetails,
+          currentEmployee: null,
+          assignmentHistory: []
+        };
+
+        // Load assignment history
+        this.visitorService.getVisitorAssignmentHistory(visitor.visitorId).subscribe({
+          next: (history) => {
+            if (history && history.length > 0) {
+              this.selectedVisitorDetails.currentEmployee = {
+                employeeName: history[0].employeeName
+              };
+              this.selectedVisitorDetails.assignmentHistory = history;
+            }
+          },
+          error: (err) => console.error('Error loading history:', err)
+        });
+      },
+      error: (err) => console.error('Error loading visitor:', err)
+    });
   }
 
 

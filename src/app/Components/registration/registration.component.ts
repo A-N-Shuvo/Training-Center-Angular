@@ -201,7 +201,7 @@ export class RegistrationComponent implements OnInit {
     Object.keys(formValues).forEach(key => {
       if (key !== 'imageFile' && key !== 'documentFile' &&
         key !== 'registrationDate' && key !== 'dateOfBirth' &&
-        key !== 'originatDateofBirth' && key !== 'registraionNo') {
+        key !== 'originatDateofBirth' && key !== 'registrationNo') {
         if (formValues[key] !== null && formValues[key] !== undefined) {
           formData.append(key, formValues[key]);
         }
@@ -301,7 +301,7 @@ export class RegistrationComponent implements OnInit {
 
     this.registrationForm.patchValue({
       ...formattedRegistration,
-      registraionNo: registration.registraionNo,
+      registrationNo: registration.registrationNo,
       registrationDate: this.formatDate(registration.registrationDate),
       imageFile: null,
       documentFile: null

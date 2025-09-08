@@ -49,16 +49,7 @@ export class DepartmentComponent implements OnInit {
     this.loadDepartments();
   }
 
-  //loadDepartments() {
-  //  this.departmentService.getAllDepartments().subscribe({
-  //    next: (res) => {
-  //      this.departmentList = res;
-  //      this.filteredList = [...res];
-  //      this.applySorting();
-  //    },
-  //    error: (err) => console.error('Error loading departments:', err)
-  //  });
-  //}
+  
 
   loadDepartments() {
     this.departmentService.getAllDepartments().subscribe({

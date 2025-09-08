@@ -13,26 +13,27 @@ export class BatchTransferService {
   constructor(private http: HttpClient) { }
 
   getAllBatchTransfers(): Observable<BatchTransfer[]> {
-    return this.http.get<BatchTransfer[]>(this.apiUrl);
+    return this.http.get<BatchTransfer[]>(`${this.apiUrl}/GetBatchTransfers`);
   }
 
-  getBatchTransferByTrainee(traineeId: number): Observable<BatchTransfer> {
-    return this.http.get<BatchTransfer>(`${this.apiUrl}/${traineeId}`);
+  getBatchTransferById(id: number): Observable<BatchTransfer> {
+    return this.http.get<BatchTransfer>(`${this.apiUrl}/GetBatchTransfer/${id}`);
   }
 
   createBatchTransfer(batchTransfer: BatchTransfer): Observable<BatchTransfer> {
-    return this.http.post<BatchTransfer>(this.apiUrl, batchTransfer);
+    return this.http.post<BatchTransfer>(`${this.apiUrl}/InsertBatchTransfer`, batchTransfer);
   }
 
-  updateBatchTransfer(traineeId: number, batchTransfer: BatchTransfer): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${traineeId}`, batchTransfer);
+  deleteBatchTransfer(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/DeleteBatchTransfer/${id}`);
   }
 
-  deleteBatchTransfer(traineeId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${traineeId}`);
-  }
   getTraineeDisplayList(): Observable<TraineeDisplay[]> {
-    return this.http.get<TraineeDisplay[]>('http://localhost:5281/api/Admission/trainee-display-list');
+    return this.http.get<TraineeDisplay[]>(`${this.apiUrl}/GetTraineeOptions`);
   }
 
+  getBatchOptions(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/GetBatchOptions`);
+  }
 }
+

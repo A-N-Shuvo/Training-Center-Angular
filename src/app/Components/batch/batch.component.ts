@@ -1,564 +1,532 @@
-//import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-//import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-//import { CommonModule, DatePipe } from '@angular/common';
-//import { Batch } from '../../Models/batch';
-//import { Course } from '../../Models/course';
-//import { Instructor } from '../../Models/instructor';
-//import { Classroom } from '../../Models/classroom';
-//import { Day } from '../../Models/day';
-//import { Slot } from '../../Models/slot';
-//import { BatchService } from '../../Services/batch.service';
-//import { CourseService } from '../../Services/course.service';
-//import { InstructorService } from '../../Services/instructor.service';
-//import { ClassroomService } from '../../Services/classroom.service';
-//import { DayService } from '../../Services/day.service';
-//import { SlotService } from '../../Services/slot.service';
-//import * as bootstrap from 'bootstrap';
-
-//@Component({
-//  selector: 'app-batch',
-//  templateUrl: './batch.component.html',
-//  styleUrls: ['./batch.component.css'],
-//  standalone: true,
-//  imports: [CommonModule, ReactiveFormsModule, DatePipe]
-//})
-//export class BatchComponent implements OnInit {
-//  @ViewChild('batchModal') batchModal!: ElementRef;
-//  @ViewChild('detailsModal') detailsModal!: ElementRef;
-
-//  batchList: Batch[] = [];
-//  paginatedBatches: Batch[] = [];
-//  selectedBatch: Batch | null = null;
-//  courses: Course[] = [];
-//  instructors: Instructor[] = [];
-//  classRooms: Classroom[] = [];
-//  days: Day[] = [];
-//  slots: Slot[] = [];
-
-//  batchForm: FormGroup;
-//  checkedDays: { [key: number]: boolean } = {};
-
-//  // Pagination variables
-//  currentPage: number = 1;
-//  itemsPerPage: number = 5;
-//  totalItems: number = 0;
-//  totalPages: number = 0;
-//  pageNumbers: number[] = [];
-
-//  constructor(
-//    private fb: FormBuilder,
-//    private batchService: BatchService,
-//    private courseService: CourseService,
-//    private instructorService: InstructorService,
-//    private classRoomService: ClassroomService,
-//    private dayService: DayService,
-//    private slotService: SlotService
-//  ) {
-//    this.batchForm = this.fb.group({
-//      batchId: [0],
-//      batchName: ['', Validators.required],
-//      courseId: [null, Validators.required],
-//      startDate: ['', Validators.required],
-//      endDate: [''],
-//      remarks:[''],
-//      batchType: ['Regular', Validators.required],
-//      selectedDayIds: [[], [Validators.required, Validators.minLength(1)]],
-//      timeSlot: ['', Validators.required],
-//      instructorId: [null, Validators.required],
-//      classRoomId: [null, Validators.required],
-//      isActive: [true]
-//    });
-//  }
-
-//  ngOnInit(): void {
-//    this.loadBatches();
-//    this.loadDropdownData();
-//  }
-
-//  loadBatches(): void {
-//    this.batchService.getAllBatches().subscribe({
-//      next: (batches) => {
-//        this.batchList = batches;
-//        this.totalItems = batches.length;
-//        this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
-//        this.generatePageNumbers();
-//        this.paginateBatches();
-//      },
-//      error: (error) => console.error('Error loading batches:', error)
-//    });
-//  }
-
-//  loadDropdownData(): void {
-//    this.courseService.getActiveCourses().subscribe(data => this.courses = data);
-//    this.instructorService.getAllInstructorsWithEmployees().subscribe(data => {
-//      this.instructors = data;
-//    });
-//    this.classRoomService.getAllClassrooms().subscribe(data => this.classRooms = data);
-//    this.dayService.getAllDays().subscribe(data => this.days = data);
-//    this.slotService.getAllSlots().subscribe(data => this.slots = data);
-//  }
-
-//  // Pagination methods
-//  paginateBatches() {
-//    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-//    const endIndex = startIndex + this.itemsPerPage;
-//    this.paginatedBatches = this.batchList.slice(startIndex, endIndex);
-//  }
-
-//  changePage(page: number) {
-//    if (page < 1 || page > this.totalPages) return;
-//    this.currentPage = page;
-//    this.paginateBatches();
-//  }
-
-//  generatePageNumbers() {
-//    this.pageNumbers = [];
-//    for (let i = 1; i <= this.totalPages; i++) {
-//      this.pageNumbers.push(i);
-//    }
-//  }
-
-//  onItemsPerPageChange(event: Event) {
-//    const selectElement = event.target as HTMLSelectElement;
-//    this.itemsPerPage = Number(selectElement.value);
-//    this.currentPage = 1;
-//    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
-//    this.generatePageNumbers();
-//    this.paginateBatches();
-//  }
-
-//  openModal(): void {
-//    this.batchForm.reset({
-//      batchId: 0,
-//      isActive: true,
-//      batchType: 'Regular'
-//    });
-//    this.checkedDays = {};
-//    const modal = new bootstrap.Modal(this.batchModal.nativeElement);
-//    modal.show();
-//  }
-
-//  closeModal(): void {
-//    const modal = bootstrap.Modal.getInstance(this.batchModal.nativeElement);
-//    modal?.hide();
-//  }
-
-//  onEdit(batch: Batch): void {
-//    const formattedStartDate = batch.startDate ? new Date(batch.startDate).toISOString().split('T')[0] : '';
-//    const formattedEndDate = batch.endDate ? new Date(batch.endDate).toISOString().split('T')[0] : '';
-
-//    this.checkedDays = {};
-//    const dayIds = batch.classDays?.split(',').map(day => {
-//      const foundDay = this.days.find(d => d.dayName === day.trim());
-//      if (foundDay) {
-//        this.checkedDays[foundDay.dayId] = true;
-//        return foundDay.dayId;
-//      }
-//      return undefined;
-//    }).filter(id => id !== undefined) as number[];
-
-//    const matchingSlot = this.slots.find(slot =>
-//      slot.timeSlotType === batch.timeSlot ||
-//      `${slot.timeSlotType} (${slot.startTime} - ${slot.endTime})` === batch.timeSlot
-//    );
-
-//    this.batchForm.patchValue({
-//      ...batch,
-//      startDate: formattedStartDate,
-//      endDate: formattedEndDate,
-//      selectedDayIds: dayIds,
-//      timeSlot: matchingSlot ? matchingSlot.slotID : null
-//    });
-
-//    const modal = new bootstrap.Modal(this.batchModal.nativeElement);
-//    modal.show();
-//  }
-
-//  onSubmit(): void {
-//    if (this.batchForm.invalid) return;
-
-//    const formValue = this.batchForm.value;
-//    const selectedDays = this.days.filter(day =>
-//      formValue.selectedDayIds.includes(day.dayId)
-//    ).map(day => day.dayName);
-
-//    const batchData: Batch = {
-//      ...formValue,
-//      classDays: selectedDays.join(',')
-//    };
-
-//    if (batchData.batchId === 0) {
-//      this.batchService.addBatch(batchData).subscribe({
-//        next: () => {
-//          this.loadBatches();
-//          this.closeModal();
-//        },
-//        error: (error) => console.error('Error adding batch:', error)
-//      });
-//    } else {
-//      this.batchService.updateBatch(batchData).subscribe({
-//        next: () => {
-//          this.loadBatches();
-//          this.closeModal();
-//        },
-//        error: (error) => console.error('Error updating batch:', error)
-//      });
-//    }
-//  }
-
-//  onDetails(batch: Batch): void {
-//    this.selectedBatch = batch;
-//    const modal = new bootstrap.Modal(this.detailsModal.nativeElement);
-//    modal.show();
-//  }
-
-//  closeDetailsModal(): void {
-//    const modal = bootstrap.Modal.getInstance(this.detailsModal.nativeElement);
-//    modal?.hide();
-//  }
-
-//  onDelete(batch: Batch): void {
-//    if (confirm('Are you sure you want to delete this batch?')) {
-//      this.batchService.deleteBatch(batch.batchId).subscribe({
-//        next: () => {
-//          this.batchList = this.batchList.filter(b => b.batchId !== batch.batchId);
-//          this.totalItems = this.batchList.length;
-//          this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
-//          this.generatePageNumbers();
-//          this.paginateBatches();
-//        },
-//        error: (error) => console.error('Error deleting batch:', error)
-//      });
-//    }
-//  }
-
-//  onDayCheckboxChange(dayId: number): void {
-//    this.checkedDays[dayId] = !this.checkedDays[dayId];
-//    const selectedDays = Object.keys(this.checkedDays)
-//      .filter(id => this.checkedDays[+id])
-//      .map(id => +id);
-//    this.batchForm.get('selectedDayIds')?.setValue(selectedDays);
-//  }
-//}
-
-
-
-import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule, DatePipe } from '@angular/common';
-import { Batch } from '../../Models/batch';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { Batch, BatchDto } from '../../Models/batch';
+import { BatchService } from '../../Services/batch.service';
 import { Course } from '../../Models/course';
 import { Instructor } from '../../Models/instructor';
-import { Classroom } from '../../Models/classroom';
-import { Day } from '../../Models/day';
-import { Slot } from '../../Models/slot';
-import { BatchService } from '../../Services/batch.service';
+import { ClassRoom } from '../../Models/classroom';
+import { ClassSchedule } from '../../Models/class-schedule';
 import { CourseService } from '../../Services/course.service';
 import { InstructorService } from '../../Services/instructor.service';
-import { ClassroomService } from '../../Services/classroom.service';
-import { DayService } from '../../Services/day.service';
-import { SlotService } from '../../Services/slot.service';
+import { ClassRoomService } from '../../Services/classroom.service';
+import { ClassScheduleService } from '../../Services/class-schedule.service';
+import { CommonModule } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Day } from '../../Models/day';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-batch',
-  templateUrl: './batch.component.html',
-  styleUrls: ['./batch.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DatePipe, FormsModule, NgxPaginationModule]
+  imports: [CommonModule, FormsModule, MatTableModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatIconModule,
+    MatButtonModule,
+    MatChipsModule,
+    MatCheckboxModule,
+    ReactiveFormsModule,
+    NgxPaginationModule],
+  templateUrl: './batch.component.html',
+  styleUrls: ['./batch.component.css']
 })
 export class BatchComponent implements OnInit {
-  @ViewChild('batchModal') batchModal!: ElementRef;
-  @ViewChild('detailsModal') detailsModal!: ElementRef;
-
-  batchList: Batch[] = [];
-  filteredList: Batch[] = [];
-  selectedBatch: Batch | null = null;
-  courses: Course[] = [];
-  instructors: Instructor[] = [];
-  classRooms: Classroom[] = [];
   days: Day[] = [];
-  slots: Slot[] = [];
+  batches: BatchDto[] = [];
+  displayedColumns: string[] = [
+    'batchName',
+    'courseName',
+    'startDate',
+    'endDate',
+    'batchType',
+    'employeeName',
+    'classRoomName',
+    'isActive',
+    'actions'
+  ];
 
+  // Form related properties
   batchForm: FormGroup;
-  checkedDays: { [key: number]: boolean } = {};
-  isSubmitting = false;
+  showForm = false;
+  isEditMode = false;
+  currentBatchId?: number;
+  private originalCourseId?: number;
+  showDetailsModal = false;
+  selectedBatch: BatchDto | null = null;
+  showAlert = false;
+  alertMessage = '';
+  alertType: 'success' | 'danger' = 'success';
+  courses: Course[] = [];
+  //instructors: Instructor[] = [];
+  filteredInstructors: Instructor[] = [];
+  classrooms: ClassRoom[] = [];
+  schedules: ClassSchedule[] = [];
+  batchTypes = ['Regular', 'Weekend', 'Online'];
+  selectedSchedules: ClassSchedule[] = [];
+  p: number = 1; // current page for pagination
+  itemsPerPage: number = 5; // default page size
+  allInstructors: Instructor[] = [];
 
-  // Pagination properties
-  p: number = 1;
-  itemsPerPage: number = 5;
-  searchText: string = '';
-  searchBy: string = 'batchName'; // Default search field
 
-  // Sorting properties
-  sortColumn: string = 'batchName';
-  sortDirection: 'asc' | 'desc' = 'asc';
-
-  batchService = inject(BatchService);
-  courseService = inject(CourseService);
-  instructorService = inject(InstructorService);
-  classRoomService = inject(ClassroomService);
-  dayService = inject(DayService);
-  slotService = inject(SlotService);
-
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private batchService: BatchService,
+    private courseService: CourseService,
+    private instructorService: InstructorService,
+    private classroomService: ClassRoomService,
+    private scheduleService: ClassScheduleService,
+    private fb: FormBuilder,
+    private dialog: MatDialog
+  ) {
     this.batchForm = this.fb.group({
-      batchId: [0],
       batchName: ['', Validators.required],
-      courseId: [null, Validators.required],
+      courseId: ['', Validators.required],
       startDate: ['', Validators.required],
       endDate: [''],
+      batchType: ['', Validators.required],
+      instructorId: ['', Validators.required],
+      classRoomId: ['', Validators.required],
+      isActive: [true],
       remarks: [''],
-      batchType: ['Regular', Validators.required],
-      selectedDayIds: [[], [Validators.required, Validators.minLength(1)]],
-      timeSlot: ['', Validators.required],
-      instructorId: [null, Validators.required],
-      classRoomId: [null, Validators.required],
-      isActive: [true]
+      selectedScheduleIds: [[]],
+      previousInstructorIds: [[]]
     });
   }
 
   ngOnInit(): void {
     this.loadBatches();
-    this.loadDropdownData();
+    this.loadDropdowns();
+    this.loadInstructors();
+  }
+  
+
+  private showAlertMessage(message: string, type: 'success' | 'danger') {
+    this.alertMessage = message;
+    this.alertType = type;
+    this.showAlert = true;
+
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+      this.showAlert = false;
+    }, 3000);
   }
 
-  applyFilter() {
-    if (!this.searchText) {
-      this.filteredList = [...this.batchList];
-      this.applySorting();
-      return;
-    }
-
-    this.filteredList = this.batchList.filter(batch => {
-      const searchField = batch[this.searchBy as keyof Batch];
-
-      // Special handling for course name
-      if (this.searchBy === 'courseId') {
-        const courseName = this.getCourseName(batch.courseId).toLowerCase();
-        return courseName.includes(this.searchText.toLowerCase());
-      }
-
-      // Special handling for instructor name
-      if (this.searchBy === 'instructorId') {
-        const instructorName = this.getInstructorName(batch.instructorId).toLowerCase();
-        return instructorName.includes(this.searchText.toLowerCase());
-      }
-
-      // Special handling for classroom name
-      if (this.searchBy === 'classRoomId') {
-        const roomName = this.getClassRoomName(batch.classRoomId).toLowerCase();
-        return roomName.includes(this.searchText.toLowerCase());
-      }
-
-      if (typeof searchField === 'string') {
-        return searchField.toLowerCase().includes(this.searchText.toLowerCase());
-      }
-      return false;
+  loadInstructors(): void {
+    this.instructorService.getAllInstructors().subscribe({
+      next: (instructors) => {
+        this.filteredInstructors = instructors.filter(instructor =>
+          // Only include instructors with some name available
+          instructor.employeeName || instructor.employee?.employeeName
+        );
+      },
+      error: (err) => console.error('Error loading instructors', err)
     });
-
-    this.applySorting();
   }
 
-  sort(column: string) {
-    if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortColumn = column;
-      this.sortDirection = 'asc';
-    }
-    this.applySorting();
-  }
-
-  applySorting() {
-    this.filteredList.sort((a, b) => {
-      let valA = a[this.sortColumn as keyof Batch];
-      let valB = b[this.sortColumn as keyof Batch];
-
-      // Special handling for course name sorting
-      if (this.sortColumn === 'courseId') {
-        valA = this.getCourseName(a.courseId);
-        valB = this.getCourseName(b.courseId);
-      }
-
-      // Special handling for instructor name sorting
-      if (this.sortColumn === 'instructorId') {
-        valA = this.getInstructorName(a.instructorId);
-        valB = this.getInstructorName(b.instructorId);
-      }
-
-      // Special handling for classroom name sorting
-      if (this.sortColumn === 'classRoomId') {
-        valA = this.getClassRoomName(a.classRoomId);
-        valB = this.getClassRoomName(b.classRoomId);
-      }
-
-      // Handle null/undefined values
-      if (valA == null) return this.sortDirection === 'asc' ? 1 : -1;
-      if (valB == null) return this.sortDirection === 'asc' ? -1 : 1;
-
-      // Handle string comparison
-      if (typeof valA === 'string' && typeof valB === 'string') {
-        return this.sortDirection === 'asc'
-          ? valA.localeCompare(valB)
-          : valB.localeCompare(valA);
-      }
-
-      // Handle number/date comparison
-      return this.sortDirection === 'asc'
-        ? (valA > valB ? 1 : -1)
-        : (valB > valA ? 1 : -1);
-    });
+  // Helper method to get display name
+  getInstructorDisplayName(instructor: Instructor): string {
+    return instructor.employeeName || instructor.employee?.employeeName || '';
   }
 
   loadBatches(): void {
-    this.batchService.getAllBatches().subscribe({
-      next: (batches) => {
-        this.batchList = batches;
-        this.filteredList = [...batches];
-        this.applySorting();
-      },
-      error: (error) => console.error('Error loading batches:', error)
+    this.batchService.getBatches().subscribe(batches => {
+      this.batches = batches;
     });
   }
 
-  loadDropdownData(): void {
-    this.courseService.getActiveCourses().subscribe(data => this.courses = data);
-    this.instructorService.getAllInstructorsWithEmployees().subscribe(data => {
-      this.instructors = data;
-    });
-    this.classRoomService.getAllClassrooms().subscribe(data => this.classRooms = data);
-    this.dayService.getAllDays().subscribe(data => this.days = data);
-    this.slotService.getAllSlots().subscribe(data => this.slots = data);
+  loadDropdowns(): void {
+    this.courseService.getAllCourses().subscribe(courses => this.courses = courses);
+    //this.instructorService.getAllInstructors().subscribe(instructors => this.instructors = instructors);
+    this.classroomService.getAllClassRooms().subscribe(classrooms => this.classrooms = classrooms);
+    this.scheduleService.getSchedules().subscribe(schedules => this.schedules = schedules);
   }
 
-  getCourseName(id: number): string {
-    const course = this.courses.find(c => c.courseId === id);
-    return course ? course.courseName : 'Unknown';
-  }
-
-  getInstructorName(id: number): string {
-    const instructor = this.instructors.find(i => i.instructorId === id);
-    return instructor ? instructor.employee?.employeeName || 'Unknown' : 'Unknown';
-  }
-
-  getClassRoomName(id: number): string {
-    const room = this.classRooms.find(r => r.classRoomId === id);
-    return room ? room.roomName : 'Unknown';
-  }
-
-  openModal(): void {
+  showAddForm(): void {
+    this.isEditMode = false;
+    this.currentBatchId = undefined;
+    this.selectedSchedules = [];
     this.batchForm.reset({
-      batchId: 0,
       isActive: true,
-      batchType: 'Regular'
+      selectedScheduleIds: []
     });
-    this.checkedDays = {};
-    this.batchModal.nativeElement.style.display = 'block';
+    this.showForm = true;
   }
 
-  closeModal(): void {
-    this.batchModal.nativeElement.style.display = 'none';
-  }
 
-  onEdit(batch: Batch): void {
-    const formattedStartDate = batch.startDate ? new Date(batch.startDate).toISOString().split('T')[0] : '';
-    const formattedEndDate = batch.endDate ? new Date(batch.endDate).toISOString().split('T')[0] : '';
+  
 
-    this.checkedDays = {};
-    const dayIds = batch.classDays?.split(',').map(day => {
-      const foundDay = this.days.find(d => d.dayName === day.trim());
-      if (foundDay) {
-        this.checkedDays[foundDay.dayId] = true;
-        return foundDay.dayId;
-      }
-      return undefined;
-    }).filter(id => id !== undefined) as number[];
 
-    const matchingSlot = this.slots.find(slot =>
-      slot.timeSlotType === batch.timeSlot ||
-      `${slot.timeSlotType} (${slot.startTime} - ${slot.endTime})` === batch.timeSlot
-    );
+  showEditForm(batch: BatchDto): void {
+    this.isEditMode = true;
+    this.currentBatchId = batch.batchId;
+    this.originalCourseId = batch.courseId;
+    // Load course first to filter instructors
+    this.filterInstructorsByCourse(batch.courseId);
+    //this.updateBatchNameDisplay(batch.courseId);
 
-    this.batchForm.patchValue({
-      ...batch,
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
-      selectedDayIds: dayIds,
-      timeSlot: matchingSlot ? matchingSlot.slotID : null
-    });
-
-    this.batchModal.nativeElement.style.display = 'block';
-  }
-
-  onSubmit(): void {
-    if (this.batchForm.invalid || this.isSubmitting) {
-      alert('Please fill all required fields.');
-      return;
+    this.selectedSchedules = [];
+    if (batch.selectedScheduleIds?.length) {
+      this.selectedSchedules = this.schedules.filter(s =>
+        batch.selectedScheduleIds.includes(s.classScheduleId)
+      );
     }
 
-    this.isSubmitting = true;
+    // Format dates for the form
+    const formattedStartDate = this.formatDateForInput(batch.startDate);
+    const formattedEndDate = batch.endDate ? this.formatDateForInput(batch.endDate) : '';
+
+    // Load existing previous instructors
+    const existingPreviousInstructors = batch.previousInstructorIds || [];
+
+    this.batchForm.patchValue({
+      batchName: batch.batchName, // Keep original stored name
+      courseId: batch.courseId,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+      batchType: batch.batchType,
+      instructorId: batch.instructorId,
+      classRoomId: batch.classRoomId,
+      isActive: batch.isActive,
+      remarks: batch.remarks,
+      selectedScheduleIds: batch.selectedScheduleIds,
+      previousInstructorIds: existingPreviousInstructors
+    });
+
+    // Add a temporary display name field
+    this.updateDisplayName(batch.courseId);
+    this.showForm = true;
+  }
+
+  private updateDisplayName(courseId: number): void {
+    const course = this.courses.find(c => c.courseId === courseId);
+    if (course) {
+      // This is just for display, won't affect the saved value
+      const displayName = `${course.courseName}-${this.batchForm.value.batchName.split('-')[1]}`;
+      this.batchForm.get('batchName')?.setValue(displayName);
+    }
+  }
+
+
+  
+
+  // Add this helper method to format dates for the input field
+  private formatDateForInput(date: Date | string): string {
+    if (!date) return '';
+
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
+
+    return `${year}-${month}-${day}`;
+  }
+
+  cancelForm(): void {
+    this.showForm = false;
+    this.batchForm.reset();
+  }
+   
+
+
+
+  //onSubmit(): void {
+  //  if (this.batchForm.invalid) return;
+
+  //  const formValue = this.batchForm.value;
+  //  let batchName = formValue.batchName;
+
+  //  if (this.isEditMode && this.currentBatchId) {
+  //    const originalBatch = this.batches.find(b => b.batchId === this.currentBatchId);
+  //    batchName = originalBatch?.batchName || formValue.batchName;
+  //  }
+
+  //  const batchData: Batch = {
+  //    ...formValue,
+  //    batchName: formValue.batchName,
+  //    batchId: this.currentBatchId,
+  //    startDate: new Date(formValue.startDate),
+  //    endDate: formValue.endDate ? new Date(formValue.endDate) : null,
+  //    previousInstructorIds: formValue.previousInstructorIds || []
+  //  };
+
+  //  const operation = this.isEditMode && this.currentBatchId
+  //    ? this.batchService.updateBatch(this.currentBatchId, batchData)
+  //    : this.batchService.createBatch(batchData);
+
+  //  operation.subscribe({
+  //    next: () => {
+  //      const action = this.isEditMode ? 'updated' : 'created';
+  //      this.showAlertMessage(`Batch ${action} successfully!`, 'success');
+  //      this.loadBatches();
+  //      this.showForm = false;
+  //    },
+  //    error: (err) => {
+  //      console.error('Error saving batch:', err);
+  //      this.showAlertMessage(`Failed to ${this.isEditMode ? 'update' : 'create'} batch!`, 'danger');
+  //    }
+  //  });
+  //}
+
+
+  onSubmit(): void {
+    if (this.batchForm.invalid) return;
+
     const formValue = this.batchForm.value;
-    const selectedDays = this.days.filter(day =>
-      formValue.selectedDayIds.includes(day.dayId)
-    ).map(day => day.dayName);
+    let batchName = formValue.batchName;
+
+    if (this.isEditMode && this.currentBatchId) {
+      const originalBatch = this.batches.find(b => b.batchId === this.currentBatchId);
+      batchName = originalBatch?.batchName || formValue.batchName;
+    }
 
     const batchData: Batch = {
       ...formValue,
-      classDays: selectedDays.join(',')
+      batchName: formValue.batchName,
+      batchId: this.currentBatchId,
+      startDate: new Date(formValue.startDate),
+      endDate: formValue.endDate ? new Date(formValue.endDate) : null,
+      previousInstructorIds: formValue.previousInstructorIds || []
     };
 
-    if (batchData.batchId === 0) {
-      this.batchService.addBatch(batchData).subscribe({
+    if (this.isEditMode && this.currentBatchId) {
+      this.batchService.updateBatch(this.currentBatchId, batchData).subscribe({
         next: () => {
-          alert('Batch added successfully.');
+          this.showAlertMessage('Batch updated successfully!', 'success');
           this.loadBatches();
-          this.closeModal();
-          this.isSubmitting = false;
+          this.showForm = false;
         },
-        error: () => {
-          this.isSubmitting = false;
+        error: (err: any) => {
+          console.error('Error updating batch:', err);
+          this.showAlertMessage('Failed to update batch!', 'danger');
         }
       });
     } else {
-      this.batchService.updateBatch(batchData).subscribe({
+      this.batchService.createBatch(batchData).subscribe({
         next: () => {
-          alert('Batch updated successfully.');
+          this.showAlertMessage('Batch created successfully!', 'success');
           this.loadBatches();
-          this.closeModal();
-          this.isSubmitting = false;
+          this.showForm = false;
         },
-        error: () => {
-          this.isSubmitting = false;
+        error: (err: any) => {
+          console.error('Error creating batch:', err);
+          this.showAlertMessage('Failed to create batch!', 'danger');
         }
       });
     }
   }
 
-  onDetails(batch: Batch): void {
-    this.selectedBatch = batch;
-    this.detailsModal.nativeElement.style.display = 'block';
-  }
-
-  closeDetailsModal(): void {
-    this.detailsModal.nativeElement.style.display = 'none';
-  }
-
-  onDelete(batch: Batch): void {
-    if (confirm(`Are you sure to delete batch: ${batch.batchName}?`)) {
-      this.batchService.deleteBatch(batch.batchId).subscribe(() => {
-        alert('Batch deleted successfully.');
-        this.loadBatches();
+  deleteBatch(id: number): void {
+    if (confirm('Are you sure you want to delete this batch?')) {
+      this.batchService.deleteBatch(id).subscribe({
+        next: () => {
+          this.showAlertMessage('Batch deleted successfully!', 'success');
+          this.loadBatches();
+        },
+        error: (err) => {
+          console.error('Error deleting batch:', err);
+          this.showAlertMessage('Failed to delete batch!', 'danger');
+        }
       });
     }
   }
 
-  onDayCheckboxChange(dayId: number): void {
-    this.checkedDays[dayId] = !this.checkedDays[dayId];
-    const selectedDays = Object.keys(this.checkedDays)
-      .filter(id => this.checkedDays[+id])
-      .map(id => +id);
-    this.batchForm.get('selectedDayIds')?.setValue(selectedDays);
+  compareById(item1: any, item2: any): boolean {
+    return item1 && item2 ? item1.id === item2.id : item1 === item2;
   }
+
+  onScheduleSelect(event: any): void {
+    const selectedId = +event.target.value;
+    const schedule = this.schedules.find(s => s.classScheduleId === selectedId);
+
+    if (schedule && !this.selectedSchedules.some(s => s.classScheduleId === selectedId)) {
+      this.selectedSchedules.push(schedule);
+
+      const currentIds = this.batchForm.get('selectedScheduleIds')?.value || [];
+      this.batchForm.get('selectedScheduleIds')?.setValue([...currentIds, selectedId]);
+    }
+
+    // Reset dropdown
+    event.target.value = '';
+  }
+
+  removeSchedule(scheduleId: number): void {
+    this.selectedSchedules = this.selectedSchedules.filter(s => s.classScheduleId !== scheduleId);
+
+    const currentIds = this.batchForm.get('selectedScheduleIds')?.value || [];
+    this.batchForm.get('selectedScheduleIds')?.setValue(
+      currentIds.filter((id: number) => id !== scheduleId)
+    );
+  }
+
+  // Update your getScheduleDisplay method
+  //getScheduleDisplay(schedule: ClassSchedule): string {
+
+  //  const dayNames = schedule.selectedDays
+  //    ? `(${schedule.selectedDays})`  // assuming selectedDays is already a comma-separated string
+  //    : '(No days selected)';
+
+  //  const times = schedule.slot
+  //    ? `${schedule.slot.startTime} to ${schedule.slot.endTime}`
+  //    : 'No time set';
+
+  //  return `${dayNames} - ${times}`;
+  //}
+
+  getScheduleDisplay(schedule: ClassSchedule | number): string {
+    // If it's a number (ID), find the corresponding schedule
+    if (typeof schedule === 'number') {
+      const foundSchedule = this.schedules.find(s => s.classScheduleId === schedule);
+      if (!foundSchedule) return 'Schedule not found';
+      schedule = foundSchedule;
+    }
+
+    const dayNames = schedule.selectedDays
+      ? `(${schedule.selectedDays})`  // assuming selectedDays is already a comma-separated string
+      : 'No days selected';
+
+    const times = schedule.slot
+      ? `${schedule.slot.startTime} to ${schedule.slot.endTime}`
+      : 'No time set';
+
+    return `${dayNames} - ${times}`;
+  }
+
+  getSelectedSchedulesDisplay(selectedScheduleIds: number[]): string {
+    if (!selectedScheduleIds || selectedScheduleIds.length === 0) {
+      return 'No schedules selected';
+    }
+
+    return selectedScheduleIds
+      .map(id => this.getScheduleDisplay(id))
+      .join('; ');
+  }
+
+
+  filterInstructorsByCourse(courseId: number): void {
+    if (!courseId) {
+      this.filteredInstructors = [];
+      return;
+    }
+
+    this.courseService.getCourseWithInstructors(courseId).subscribe({
+      next: (response) => {
+        if (response && response.instructors) {
+          // Map the API response to your instructor format
+          this.filteredInstructors = response.instructors.map((instructor: any) => ({
+            instructorId: instructor.instructorId,
+            employeeName: instructor.employeeName,
+            // Add other properties if needed
+          }));
+        } else {
+          this.filteredInstructors = [];
+        }
+
+        // Reset instructor selection if current one is not in the filtered list
+        const currentInstructorId = this.batchForm.get('instructorId')?.value;
+        if (currentInstructorId && !this.filteredInstructors.some(i => i.instructorId === currentInstructorId)) {
+          this.batchForm.get('instructorId')?.setValue(null);
+        }
+      },
+      error: (err) => {
+        console.error('Error loading course instructors', err);
+        this.filteredInstructors = [];
+      }
+    });
+  }
+
+  
+
+
+
+  onCourseSelect(): void {
+    const courseId = this.batchForm.get('courseId')?.value;
+
+    // Only generate name when in add mode
+    if (!this.isEditMode && courseId) {
+      this.batchService.generateBatchName(courseId).subscribe({
+        next: (generatedName) => {
+          this.batchForm.patchValue({
+            batchName: generatedName
+          });
+        },
+        error: (err) => {
+          console.error('Error generating batch name', err);
+          // Fallback to manual name
+          const course = this.courses.find(c => c.courseId == courseId);
+          if (course) {
+            this.batchForm.patchValue({
+              batchName: `${course.courseName}-01`
+            });
+          }
+        }
+      });
+    }
+
+    this.filterInstructorsByCourse(courseId);
+
+    // Reset instructor if needed
+    const currentInstructorId = this.batchForm.get('instructorId')?.value;
+    if (currentInstructorId && !this.filteredInstructors.some(i => i.instructorId === currentInstructorId)) {
+      this.batchForm.get('instructorId')?.setValue(null);
+    }
+  }
+
+
+  getInstructorNames(instructorIds: number[]): string {
+    if (!instructorIds?.length) return 'None';
+
+    return instructorIds.map(id => {
+      const instructor = [...this.filteredInstructors, ...this.allInstructors]
+        .find(i => i.instructorId === id);
+      return instructor?.employeeName || `Instructor #${id}`;
+    }).join(', ');
+  }
+
+  
+
+  onInstructorChange(): void {
+    if (this.isEditMode && this.currentBatchId) {
+      const newInstructorId = this.batchForm.get('instructorId')?.value;
+      const originalBatch = this.batches.find(b => b.batchId === this.currentBatchId);
+
+      if (!originalBatch) return;
+
+      const currentInstructorBeforeChange = originalBatch.instructorId;
+      const existingPrevious = this.batchForm.get('previousInstructorIds')?.value || [];
+
+      if (newInstructorId && currentInstructorBeforeChange &&
+        newInstructorId !== currentInstructorBeforeChange &&
+        !existingPrevious.includes(currentInstructorBeforeChange)) {
+
+        // Add to existing previous instructors
+        this.batchForm.get('previousInstructorIds')?.setValue([
+          ...existingPrevious,
+          currentInstructorBeforeChange
+        ]);
+      }
+    }
+  }
+  showDetails(batch: BatchDto): void {
+    this.selectedBatch = batch;
+    this.showDetailsModal = true;
+  }
+
+  closeDetails(): void {
+    this.showDetailsModal = false;
+    this.selectedBatch = null;
+  }
+
 }

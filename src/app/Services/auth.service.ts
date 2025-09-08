@@ -1,10 +1,13 @@
 // src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
+import { ForgotPassword } from '../Models/forgotpassword';
+import { ResetPassword } from '../Models/resetpassword';
+import { environment } from '../../environments/environment';
 
 interface DecodedToken {
   exp: number;
@@ -27,6 +30,9 @@ interface CurrentUser {
   providedIn: 'root'
 })
 export class AuthService {
+
+  private baseUrl = environment.apiBaseUrl
+
   private currentUserSubject: BehaviorSubject<CurrentUser | null>;
   public currentUser: Observable<CurrentUser | null>;
 
@@ -119,6 +125,22 @@ export class AuthService {
   updateUserStatus(payload: { userId: string; isActive: boolean }): Observable<any> {
     return this.http.put(`http://localhost:5281/api/auth/updatestatus`, payload);
   }
+  forgotPassword(model: ForgotPassword): Observable<any> {
+    return this.http.post(`http://localhost:5281/api/auth/forgot-password`, model);
+  }
 
+  resetPassword(model: ResetPassword): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post(`${this.baseUrl}/auth/reset-password`, model, { headers })
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Reset password error:', error);
+          return throwError(() => error);
+        })
+      );
+  }
 
 }

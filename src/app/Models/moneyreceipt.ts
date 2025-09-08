@@ -2,11 +2,12 @@ export interface MoneyReceipt {
   moneyReceiptId: number;
   moneyReceiptNo: string;
   receiptDate: Date;
-  category: 'Course' /*| 'NonCourse'*/ | 'Registration Fee';
+  category: 'Course'  | 'Registration Fee';
   //admissionId?: number;
   admissionNo: string;
   invoiceId?: number;
   visitorId?: number;
+  visitor?: Visitor;
   paymentMode: 'Cash' | 'Cheque' | 'MFS' | 'Card';
 
   // Cheque details
@@ -27,7 +28,7 @@ export interface MoneyReceipt {
   paidAmount: number;
   dueAmount: number;
 
-  createdBy?: string;
+  createdBy: string;
   remarks?: string;
 }
 export interface Visitor {

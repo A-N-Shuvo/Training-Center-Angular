@@ -15,7 +15,7 @@ import { RegisterComponent } from './Components/register/register.component';
 import { PrivacyComponent } from './Components/privacy/privacy.component';
 import { RouterModule } from '@angular/router';
 import { BatchComponent } from './Components/batch/batch.component'; // BatchComponent ইম্পোর্ট করুন
-import { ClassroomComponent } from './Components/classroom/classroom.component'; // ClassroomComponent ইম্পোর্ট করুন
+import { ClassRoomComponent } from './Components/classroom/classroom.component'; // ClassroomComponent ইম্পোর্ট করুন
 import { InstructorComponent } from './Components/instructor/instructor.component'; // InstructorComponent ইম্পোর্ট করুন
 import { SlotComponent } from './Components/slot/slot.component'; // SlotComponent ইম্পোর্ট করুন
 import { RoleManagementComponent } from './Components/rolemanagement/rolemanagement.component';
@@ -25,6 +25,15 @@ import { MoneyReceiptComponent } from './Components/money-receipt/money-receipt.
 import { VisitorAssignmentComponent } from './Components/visitorassignment/visitorassignment.component';
 import { BatchTransferComponent } from './Components/batchtransfer/batchtransfer.component';
 import { DailySalesRecordComponent } from './Components/dailysalesrecord/dailysalesrecord.component';
+import { ClassScheduleComponent } from './Components/class-schedule/class-schedule.component';
+import { DailySalesMonitorComponent } from './Components/dailysalesreport/dailysalesreport.component';
+import { TraineeAttendanceComponent } from './Components/traineeattendance/traineeattendance.component';
+import { AssessmentComponent } from './Components/assessment/assessment.component';
+import { CertificateComponent } from './Components/certificate/certificate.component';
+import { RecommendationComponent } from './Components/recommendation/recommendation.component';
+import { ResetPasswordComponent } from './Components/resetpassword/resetpassword.component';
+import { ForgotPasswordComponent } from './Components/forgotpassword/forgotpassword.component';
+import { AssessmentFormComponent } from './Components/assessment/assessment-form.component';
 
 
 export const routes: Routes = [
@@ -39,7 +48,7 @@ export const routes: Routes = [
   { path: 'course', component: CourseComponent },
   // CourseCombo এর জন্য যদি আলাদা কম্পোনেন্ট থাকে, তাহলে তার রাউট যোগ করুন
   // { path: 'coursecombo', component: CourseComboComponent }, // যদি CourseComboComponent থাকে
-  { path: 'classroom', component: ClassroomComponent }, // ClassroomComponent এর জন্য রাউট
+  { path: 'classroom', component: ClassRoomComponent }, // ClassroomComponent এর জন্য রাউট
   { path: 'day', component: DayComponent },
   { path: 'department', component: DepartmentComponent },
   { path: 'designation', component: DesignationComponent },
@@ -54,6 +63,16 @@ export const routes: Routes = [
   { path: 'visitorassignment', component: VisitorAssignmentComponent },
   { path: 'batchtransfer', component: BatchTransferComponent },
   { path: 'dailysalesrecord', component: DailySalesRecordComponent },
+  { path: 'class-schedule', component: ClassScheduleComponent },
+  { path: 'dailysalesreport', component: DailySalesMonitorComponent },
+  { path: 'traineeattendance', component: TraineeAttendanceComponent },
+  { path: 'assessment', component: AssessmentComponent },
+  { path: 'assessment/form', component: AssessmentFormComponent },
+  { path: 'assessment/form/:id', component: AssessmentFormComponent },
+  { path: 'certificate', component: CertificateComponent },
+  { path: 'recommendation', component: RecommendationComponent },
+  { path: 'forgotpassword', component: ForgotPasswordComponent },
+  { path: 'resetpassword', component: ResetPasswordComponent },
 
 
 

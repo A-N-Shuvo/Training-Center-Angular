@@ -1,24 +1,22 @@
+import { Employee } from "./employee";
+
 export interface Instructor {
   instructorId: number;
   employeeId: number;
-  employeeName?: string;  
-  employee?: Employee;  // Assuming you have an Employee interface
-  specialization: string;
-  selectedCourseIds: number[];
+  employeeName?: string;
+  employee?: Employee;
   isActive: boolean;
-  courses?: Course[];   // Assuming you have a Course interface
   remarks?: string;
+  selectedCourseIds: number[];
+  courses?: {  // Add this to match the new API response
+    courseId: number;
+    courseName: string;
+    isPrimaryInstructor: boolean;
+  }[];  instructorCourses?: InstructorCourse[];
 }
 
-// If you don't have these interfaces, here are basic versions:
-export interface Employee {
-  employeeId: number;
-  employeeName: string; 
-  // other employee properties...
-}
-
-export interface Course {
+export interface InstructorCourse {
   courseId: number;
   courseName: string;
-  // other course properties...
+  isPrimaryInstructor?: boolean;
 }

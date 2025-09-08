@@ -31,7 +31,7 @@ export class BatchTransferComponent implements OnInit {
     this.loadTrainees();
   }
   loadBatches(): void {
-    this.batchService.getAllBatches().subscribe({
+    this.batchService.getBatches().subscribe({
       next: (data) => this.batches = data,
       error: (err) => console.error('Failed to load batches', err)
     });
@@ -51,17 +51,12 @@ export class BatchTransferComponent implements OnInit {
 
   onSubmit(form: NgForm): void {
     if (form.valid) {
-      const operation = this.isEditing
-        ? this.batchTransferService.updateBatchTransfer(this.currentBatchTransfer.traineeId, this.currentBatchTransfer)
-        : this.batchTransferService.createBatchTransfer(this.currentBatchTransfer);
-      console.log('Sending to API:', this.currentBatchTransfer);
-
-      operation.subscribe({
+      this.batchTransferService.createBatchTransfer(this.currentBatchTransfer).subscribe({
         next: () => {
           this.resetForm(form);
           this.loadBatchTransfers();
         },
-        error: (err) => console.error('Operation failed', err)
+        error: err => this.handleError(err)
       });
     }
   }
@@ -108,14 +103,15 @@ export class BatchTransferComponent implements OnInit {
     this.isEditing = true;
   }
 
-  deleteBatchTransfer(traineeId: number): void {
-    if (confirm('Are you sure you want to delete this batch transfer?')) {
-      this.batchTransferService.deleteBatchTransfer(traineeId).subscribe({
+  deleteBatchTransfer(batchTransferId: number): void {
+    if (confirm('Are you sure to delete this batch transfer?')) {
+      this.batchTransferService.deleteBatchTransfer(batchTransferId).subscribe({
         next: () => this.loadBatchTransfers(),
-        error: (err) => console.error('Failed to delete', err)
+        error: err => console.error('Delete failed', err)
       });
     }
   }
+
 
   resetForm(form: NgForm): void {
     form.resetForm();

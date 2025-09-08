@@ -1,69 +1,51 @@
-
 <div class="box">
   <div class="login">
     <div class="loginBx">
       <h2><i>Register</i></h2>
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" style="width: 100%;">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
-        <input type="text"
-               formControlName="fullName"
-               placeholder="User Full Name"
-               required />
-        <div *ngIf="registerForm.get('fullName')?.hasError('required')" style="color: #ff2770; font-size: 0.8em;">
-          User full name is required
+        <input type="text" formControlName="fullName" placeholder="User Full Name" required />
+        <div *ngIf="registerForm.get('fullName')?.hasError('required')" class="error-msg">
+          <p style="color:red">User full name is required</p>
         </div>
 
-        <input type="text"
-               formControlName="username"
-               placeholder="Username"
-               required />
-        <div *ngIf="registerForm.get('username')?.hasError('required')" style="color: #ff2770; font-size: 0.8em;">
-          Username is required
+        <input type="text" formControlName="username" placeholder="Username" required />
+        <div *ngIf="registerForm.get('username')?.hasError('required')" class="error-msg">
+          <p style="color:red">Username is required</p>
         </div>
 
-        <input type="email"
-               formControlName="email"
-               placeholder="Email"
-               required />
-        <div *ngIf="registerForm.get('email')?.hasError('required')" style="color: #ff2770; font-size: 0.8em;">
-          Email is required
+        <input type="email" formControlName="email" placeholder="Email" required />
+        <div *ngIf="registerForm.get('email')?.hasError('required')" class="error-msg">
+          <p style="color:red">Email is required</p>
         </div>
-        <div *ngIf="registerForm.get('email')?.hasError('email')" style="color: #ff2770; font-size: 0.8em;">
-          Please enter a valid email
+        <div *ngIf="registerForm.get('email')?.hasError('email')" class="error-msg">
+          <p style="color:red">Please enter a valid email</p>
         </div>
 
-        <input type="text"
-               formControlName="contactNo"
-               placeholder="Contact No"
-               required />
-        <div *ngIf="registerForm.get('contactNo')" style="color: #ff2770; font-size: 0.8em;">
+        <input type="text" formControlName="contactNo" placeholder="Contact No" required />
+
+        <!-- Password with eye toggle -->
+        <div class="password-wrapper">
+          <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Password" required />
+          <span class="toggle-icon" (click)="togglePasswordVisibility()">
+            <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </span>
+        </div>
+        <div *ngIf="registerForm.get('password')?.hasError('required')" class="error-msg">
+          <p style="color:red">Password is required</p>
+        </div>
+        <div *ngIf="registerForm.get('password')?.hasError('minlength')" class="error-msg">
+         <p style="color:red"> Password must be at least 6 characters</p>
         </div>
 
-
-        <input type="password"
-               formControlName="password"
-               placeholder="Password"
-               required />
-        <div *ngIf="registerForm.get('password')?.hasError('required')" style="color: #ff2770; font-size: 0.8em;">
-          Password is required
-        </div>
-        <div *ngIf="registerForm.get('password')?.hasError('minlength')" style="color: #ff2770; font-size: 0.8em;">
-          Password must be at least 6 characters
-        </div>
-
-        <div *ngIf="errorMessage" style="color: red; font-size: 0.9em;">
-          {{ errorMessage }}
-        </div>
-
-        <div *ngIf="successMessage" style="color: #45f3ff; font-size: 0.9em;">
-          {{ successMessage }}
-        </div>
+        <div *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</div>
+        <div *ngIf="successMessage" class="success-msg">{{ successMessage }}</div>
 
         <input type="submit" value="Register" [disabled]="registerForm.invalid" />
 
         <div class="group">
-          <a routerLink="/login">Already have an account?</a>
-          <a routerLink="/login">Login</a>
+          <p style="color:aqua">Already have an Account?</p>
+          <a [routerLink]="['/login']">Log in</a>
         </div>
       </form>
     </div>

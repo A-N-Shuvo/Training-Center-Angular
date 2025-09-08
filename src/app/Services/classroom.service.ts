@@ -1,52 +1,35 @@
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { Classroom } from '../Models/classroom';
-import { environment } from '../../environments/environment.development';
+import { Observable } from 'rxjs';
+import { ClassRoom, ClassRoomCourseJunction } from '../Models/classroom';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ClassroomService {
-
+export class ClassRoomService {
   private apiUrl = environment.apiBaseUrl;
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
-  http = inject(HttpClient);
-
-  // Get all classrooms
-  getAllClassrooms() {
-    return this.http.get<Classroom[]>(this.apiUrl + "/ClassRoom/GetClassRooms");
+  getAllClassRooms(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/ClassRoom/GetAllClassRooms`);
   }
 
-  // Get single classroom by ID
-  getClassroomById(id: number) {
-    return this.http.get<Classroom>(this.apiUrl + "/ClassRoom/GetClassRoom/" + id);
+  getClassRoomById(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/ClassRoom/GetClassRoom/${id}`);
   }
 
-  // Add new classroom
-  addClassroom(data: Classroom) {
-    return this.http.post(this.apiUrl + "/ClassRoom/InsertClassRoom", data);
+  createClassRoom(classRoom: ClassRoom): Observable<any> {
+    return this.http.post(`${this.apiUrl}/ClassRoom/InsertClassRoom`, classRoom);
   }
 
-  // Update existing classroom
-  updateClassroom(classroom: Classroom) {
-    return this.http.put(this.apiUrl + "/ClassRoom/UpdateClassRoom/" + classroom.classRoomId, classroom);
+  updateClassRoom(id: number, classRoom: ClassRoom): Observable<any> {
+    return this.http.put(`${this.apiUrl}/ClassRoom/UpdateClassRoom/${id}`, classRoom);
   }
 
-  // Delete classroom
-  deleteClassroom(id: number) {
-    return this.http.delete(this.apiUrl + "/ClassRoom/DeleteClassRoom/" + id);
-  }
-
-  // Get active classrooms only
-  getActiveClassrooms() {
-    return this.http.get<Classroom[]>(this.apiUrl + "/ClassRoom/GetActiveClassRooms");
-  }
-
-  // Search classrooms by criteria (optional)
-  searchClassrooms(criteria: any) {
-    return this.http.post<Classroom[]>(this.apiUrl + "/ClassRoom/SearchClassRooms", criteria);
+  deleteClassRoom(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/ClassRoom/DeleteClassRoom/${id}`);
   }
 }
 

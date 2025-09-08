@@ -1,6 +1,6 @@
 export interface Registration {
   registrationId: number;
-  registraionNo: string;
+  registrationNo: string;
   visitorId: number;
   visitor?: Visitor;
   traineeName: string;

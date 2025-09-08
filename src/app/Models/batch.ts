@@ -2,56 +2,54 @@ export interface Batch {
   batchId: number;
   batchName: string;
   courseId: number;
-  course?: Course; // Make optional to match C# nullable
-  startDate: Date | string; // Can handle both Date object and ISO string
-  endDate?: Date | string; // Optional to match nullable
-  batchType: string; // 'Regular' | 'Weekend' | 'Online' - you could use enum later
-  classDays?: string; // "Saturday,Monday,Wednesday"
-  selectedDayIds: number[]; // [1, 2, 3] for day IDs
-  timeSlot?: string; // "9:00 AM - 01:00 PM" or Slot ID before transformation
+  startDate: Date;
+  endDate?: Date;
+  batchType: string;
   instructorId: number;
-  instructor?: Instructor; // Optional
+  classRoomId: number;
   isActive: boolean;
-  classRoomId: number;
-  classRoom?: ClassRoom; // Optional
   remarks?: string;
+  selectedScheduleIds: number[];
+  previousInstructorIds: number[];
 }
 
-// Supporting interfaces (you'll need to define these based on your other models)
-export interface Course {
+export interface BatchDto {
+  batchId: number;
+  batchName: string;
   courseId: number;
-  courseName: string; // Add this
-  // ... other course properties
-}
-
-//export interface Instructor {
-//  instructorId: number;
-//  // ... other instructor properties
-//}
-
-export interface Instructor {
+  courseName?: string;
+  startDate: Date;
+  endDate?: Date;
+  batchType: string;
   instructorId: number;
-  employeeId: number;
-  employee?: Employee; // Add this relation
-  // ... other instructor properties
-}
-
-export interface Employee {
-  employeeId: number;
-  employeeName: string;
-  // ... other employee properties
-}
-
-export interface ClassRoom {
+  instructor?: {
+    instructorId: number;
+    employee?: {
+      employeeId: number;
+      employeeName: string;
+    };
+  };
+  employeeName?: string;
   classRoomId: number;
-  roomName: string; // Add this or use correct property name
-  // ... other classroom properties
+  classRoomName?: string;
+  isActive: boolean;
+  remarks?: string;
+  selectedScheduleIds: number[];
+  previousInstructorIds: number[];
+  previousInstructorIdsString: string;
+  selectedClassSchedules: string;
 }
 
-export interface Slot {
-  slotID: number; // or slotID if that's the correct name
-  timeSlotType: string;
-  startTime: string;
-  endTime: string;
-  // ... other slot properties
+export interface BatchForm {
+  batchName: string;
+  courseId: number;
+  startDate: Date;
+  endDate?: Date;
+  batchType: string;
+  instructorId: number;
+  classRoomId: number;
+  isActive: boolean;
+  remarks?: string;
+  selectedScheduleIds: number[];
 }
+

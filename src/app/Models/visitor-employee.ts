@@ -1,8 +1,9 @@
-export interface VisitorEmployee {
+export interface VisitorTransfer_Junction {
+  visitorTransferId?: number; // optional because it will be auto-generated
   visitorId: number;
   employeeId: number;
-  createdDate: Date;
+  createdDate?: Date;
   transferDate: Date;
-  notes: string;
+  notes?: string;
   userName: string;
 }

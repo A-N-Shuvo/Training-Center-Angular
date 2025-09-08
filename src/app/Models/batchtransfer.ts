@@ -1,4 +1,5 @@
 export interface BatchTransfer {
+  batchTransferId?: number; // New key property
   traineeId: number;
   batchId: number;
   createdDate?: Date;

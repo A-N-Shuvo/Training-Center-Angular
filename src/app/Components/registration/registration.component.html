@@ -38,7 +38,7 @@
     <tbody>
       <tr *ngFor="let item of paginatedRegistrations; let i = index">
         <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-        <td>{{ item.registraionNo }}</td>
+        <td>{{ item.registrationNo }}</td>
         <td>{{ item.traineeName }}</td>
         <td>{{ item.contactNo }}</td>
         <!--<td>{{ item.registrationFee }}</td>-->
@@ -346,7 +346,7 @@
             <img [src]="selectedRegistration.imagePath ? (environment.apiBaseUrl + '/' + selectedRegistration.imagePath) : 'assets/images/default-user.png'"
                  alt="Trainee Photo" class="img-thumbnail mb-3" style="max-height: 200px;">
             <h5>Name: {{ selectedRegistration.traineeName }}</h5>
-            <p class="text-muted">Registration No: {{ selectedRegistration.registraionNo }}</p>
+            <p class="text-muted">Registration No: {{ selectedRegistration.registrationNo }}</p>
           </div>
           <div class="col-md-8">
             <div class="row">

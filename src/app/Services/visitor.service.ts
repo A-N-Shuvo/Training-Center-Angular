@@ -52,7 +52,7 @@ export class VisitorService {
    
   assignVisitors(payload: any): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post(`${this.apiUrl}/VisitorEmployee/assign`, payload, { headers }).pipe(
+    return this.http.post(`${this.apiUrl}/VisitorTransfer/assign`, payload, { headers }).pipe(
       catchError(error => {
         console.error('Assignment error:', error);
         return throwError(error);
@@ -66,4 +66,17 @@ export class VisitorService {
   getVisitorWithHistory(visitorId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/Visitor/GetVisitorWithHistory/${visitorId}`);
   }
+
+  getVisitorAssignmentHistory(visitorId: number): Observable<VisitorAssignmentHistory[]> {
+    return this.http.get<VisitorAssignmentHistory[]>(`${this.apiUrl}/VisitorTransfer/GetVisitorAssignments/${visitorId}`);
+  }
+
+// Add this interface
+
+}
+export interface VisitorAssignmentHistory {
+  transferDate: string;
+  notes: string;
+  userName: string;
+  employeeName: string;
 }

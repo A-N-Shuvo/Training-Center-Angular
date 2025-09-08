@@ -1,195 +1,8 @@
-<!--<div class="container-fluid">
-  <div class="row p-2 bg-info">
-    <div class="col-6">
-      <h3>Instructor List</h3>
-    </div>
-    <div class="col-6 text-end">
-      <button class="btn btn-warning" (click)="openModal()"> Add Instructor</button>
-    </div>
-  </div>
-
-  <div class="row mb-3">
-    <div class="col-md-6">
-      <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchText"
-             (input)="applyFilter()">
-    </div>
-    <div class="col-md-6 text-end">
-      <select class="form-select d-inline-block w-auto" [(ngModel)]="itemsPerPage">
-        <option value="5">5 per page</option>
-        <option value="10">10 per page</option>
-        <option value="20">20 per page</option>
-        <option value="50">50 per page</option>
-      </select>
-    </div>
-  </div>
-
-  @if (isLoading) {
-  <div class="text-center p-5">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
-  } @else if (filteredList && filteredList.length > 0) {
-  <table class="table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th>SL No</th>
-        <th>Employee</th>
-        <th>Specialization</th>
-        <th>Is Active?</th>
-        <th class="text-center">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (instructor of filteredList | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; track $index) {
-      <tr>
-        <td>{{ (p - 1) * itemsPerPage + $index + 1 }}</td>
-        <td>{{ instructor.employeeName || getEmployeeName(instructor.employeeId) }}</td>
-        <td>{{ instructor.specialization }}</td>
-        <td>{{ instructor.isActive ? 'Yes' : 'No' }}</td>
-        <td class="text-center">
-          <button class="btn btn-info" (click)="onDetails(instructor)">Details</button> ||
-          <button class="btn btn-primary" (click)="onEdit(instructor)">Edit</button> ||
-          <button class="btn btn-danger" (click)="onDelete(instructor)">Delete</button>
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
-
-  <div class="d-flex justify-content-center">
-    <pagination-controls (pageChange)="p = $event"
-                         previousLabel="Prev"
-                         nextLabel="Next"
-                         [maxSize]="5"
-                         [responsive]="true">
-    </pagination-controls>
-  </div>
-  } @else {
-  <h5 class="text-center p-5">No Instructors Found</h5>
-  }
-</div>-->
-<!-- Instructor Modal -->
-<!--<div class="modal" id="instructorModal" #instructorModal>
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-info">
-        @if(instructorForm.value.instructorId != 0) {
-        <h4 class="modal-title">Update Instructor</h4>
-        } @else {
-        <h4 class="modal-title">Add Instructor</h4>
-        }
-        <button type="button" class="btn-close" (click)="closeModal()"></button>
-      </div>
-
-      <form [formGroup]="instructorForm" (ngSubmit)="onSubmit()">
-        <div class="modal-body">
-          <input type="hidden" formControlName="instructorId">
-
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label>Employee</label>
-              <select formControlName="employeeId" class="form-control" required>
-                <option value="">Select Employee</option>
-                @for (employee of employeeList; track employee.employeeId) {
-                <option [value]="employee.employeeId">{{ employee.employeeName }}</option>
-                }
-              </select>
-              @if (instructorForm.get('employeeId')?.invalid && (instructorForm.get('employeeId')?.dirty || instructorForm.get('employeeId')?.touched)) {
-              <div class="text-danger">Employee is required</div>
-              }
-            </div>
-            <div class="col-md-6">
-              <label>Specialization(Selected Course)</label>
-              <input type="text" style="background-color:cornsilk; color:black" formControlName="specialization" class="form-control" placeholder="Enter specialization" readonly>
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-md-12">
-              <label>Select Courses</label>
-              <div class="border p-3" style="max-height: 200px; overflow-y: auto;">
-                @for (course of getUniqueCourses(); track course.courseId) {
-                <div class="form-check">
-                  <input type="checkbox"
-                         [id]="'course-'+course.courseId"
-                         [checked]="isCourseSelected(course.courseId)"
-                         (change)="onCourseCheckboxChange($event, course.courseId)">
-                  <label class="form-check-label" [for]="'course-'+course.courseId">
-                    {{ course.courseName }}
-                  </label>
-                </div>
-                }
-              </div>
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <div class="form-check mt-4 pt-3">
-                <input type="checkbox" formControlName="isActive" class="form-check-input">
-                <label class="form-check-label">Is Active?</label>
-              </div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Remarks</label>
-            <input type="text" formControlName="remarks" class="form-control" placeholder="Remarks">
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          @if (instructorForm.value.instructorId == 0) {
-          <button type="submit" [disabled]="instructorForm.invalid || isSubmitting" class="btn btn-primary">
-            @if (isSubmitting) {
-            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-            <span role="status">Saving...</span>
-            } @else {
-            Save
-            }
-          </button>
-          } @else {
-          <button type="submit" [disabled]="instructorForm.invalid || isSubmitting" class="btn btn-success">
-            @if (isSubmitting) {
-            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-            <span role="status">Updating...</span>
-            } @else {
-            Update
-            }
-          </button>
-          }
-          <button type="button" class="btn btn-danger" (click)="closeModal()">Close</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>-->
-<!-- Details Modal -->
-<!--<div class="modal" id="detailsModal" #detailsModal>
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-secondary text-white">
-        <h4 class="modal-title">Instructor Details</h4>
-        <button type="button" class="btn-close" (click)="closeDetailsModal()"></button>
-      </div>
-      <div class="modal-body" *ngIf="selectedInstructor">
-        <p><strong>Employee:</strong> {{ selectedInstructor.employeeName || getEmployeeName(selectedInstructor.employeeId) }}</p>
-        <p><strong>Specialization:</strong> {{ selectedInstructor.specialization }}</p>
-        <p><strong>Is Active:</strong> {{ selectedInstructor.isActive ? 'true' : 'No' }}</p>
-        <p><strong>Remarks:</strong> {{ selectedInstructor.remarks }}</p>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-dark" (click)="closeDetailsModal()">Close</button>
-      </div>
-    </div>
-  </div>
-</div>-->
-
-
-
-
 <div class="container-fluid">
+  <div *ngIf="showAlert" class="alert alert-{{alertType}} alert-dismissible fade show" role="alert">
+    {{alertMessage}}
+    <button type="button" class="btn-close" (click)="showAlert = false"></button>
+  </div>
   <!-- Header Row -->
   <div class="row p-2 bg-info align-items-center">
     <div class="col-md-4">
@@ -220,8 +33,6 @@
       <select class="form-select me-2" [(ngModel)]="searchBy" style="width: 150px;">
         <option value="employeeName">Employee Name</option>
         <option value="employeeId">Employee</option>
-        <!--<option value="specialization">Specialization</option>-->
-        <!--<option value="isActive">Active Status</option>-->
       </select>
     </div>
 
@@ -243,17 +54,12 @@
       <tr>
         <th>SL No</th>
         <th (click)="sort('employeeName')" class="sortable">
-          Employee
+          Instructor Name
           <span *ngIf="sortColumn === 'employeeName'">
             {{ sortDirection === 'asc' ? '↑' : '↓' }}
           </span>
         </th>
-        <th (click)="sort('specialization')" class="sortable">
-          Specialization
-          <span *ngIf="sortColumn === 'specialization'">
-            {{ sortDirection === 'asc' ? '↑' : '↓' }}
-          </span>
-        </th>
+
         <th (click)="sort('isActive')" class="sortable">
           Is Active?
           <span *ngIf="sortColumn === 'isActive'">
@@ -268,8 +74,7 @@
       <tr>
         <td>{{ (p - 1) * itemsPerPage + $index + 1 }}</td>
         <td>{{ instructor.employeeName || getEmployeeName(instructor.employeeId) }}</td>
-        <td>{{ instructor.specialization }}</td>
-        <td>{{ instructor.isActive ? 'Yes' : 'No' }}</td>
+        <td>{{ instructor.isActive ? 'Active' : 'Inactive' }}</td>
         <td class="text-center">
           <button class="btn btn-info" (click)="onDetails(instructor)">Details</button> ||
           <button class="btn btn-primary" (click)="onEdit(instructor)">Edit</button> ||
@@ -312,7 +117,7 @@
 
           <div class="row mb-3">
             <div class="col-md-6">
-              <label>Employee</label>
+              <label>Instructor Name</label>
               <select formControlName="employeeId" class="form-control" required>
                 <option value="">Select Employee</option>
                 @for (employee of employeeList; track employee.employeeId) {
@@ -322,29 +127,6 @@
               @if (instructorForm.get('employeeId')?.invalid && (instructorForm.get('employeeId')?.dirty || instructorForm.get('employeeId')?.touched)) {
               <div class="text-danger">Employee is required</div>
               }
-            </div>
-            <div class="col-md-6">
-              <label>Specialization(Selected Course)</label>
-              <input type="text" style="background-color:cornsilk; color:black" formControlName="specialization" class="form-control" placeholder="Enter specialization" readonly>
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-md-12">
-              <label>Select Courses</label>
-              <div class="border p-3" style="max-height: 200px; overflow-y: auto;">
-                @for (course of getUniqueCourses(); track course.courseId) {
-                <div class="form-check">
-                  <input type="checkbox"
-                         [id]="'course-'+course.courseId"
-                         [checked]="isCourseSelected(course.courseId)"
-                         (change)="onCourseCheckboxChange($event, course.courseId)">
-                  <label class="form-check-label" [for]="'course-'+course.courseId">
-                    {{ course.courseName }}
-                  </label>
-                </div>
-                }
-              </div>
             </div>
           </div>
 
@@ -359,6 +141,49 @@
           <div class="mb-3">
             <label class="form-label">Remarks</label>
             <input type="text" formControlName="remarks" class="form-control" placeholder="Remarks">
+          </div>
+
+          <hr>
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label>Add Courses</label>
+              <div class="input-group mb-3">
+                <select class="form-select" [(ngModel)]="selectedCourse" [ngModelOptions]="{standalone: true}">
+                  <option [value]="null">Select Course</option>
+                  @for (course of courseList; track course.courseId) {
+                  <option [ngValue]="course">{{ course.courseName }}</option>
+                  }
+                </select>
+                <button class="btn btn-primary" type="button" (click)="addCourse()">Add</button>
+              </div>
+
+              <div class="border p-3" style="max-height: 200px; overflow-y: auto;">
+                @if (assignedCourses.length > 0) {
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th>Course Name</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (course of assignedCourses; track course.courseId) {
+                    <tr>
+                      <td>{{ course.courseName }}</td>
+                      <td>
+                        <button type="button" class="btn btn-sm btn-danger" (click)="removeCourse(course.courseId)">
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+                } @else {
+                <p class="text-muted">No courses assigned</p>
+                }
+              </div>
+            </div>
           </div>
         </div>
 
@@ -391,17 +216,34 @@
 
 <!-- Details Modal -->
 <div class="modal" id="detailsModal" #detailsModal>
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header bg-info text-white">
         <h4 class="modal-title">Instructor Details</h4>
         <button type="button" class="btn-close" (click)="closeDetailsModal()"></button>
       </div>
       <div class="modal-body" *ngIf="selectedInstructor">
-        <p><strong>Employee:</strong> {{ selectedInstructor.employeeName || getEmployeeName(selectedInstructor.employeeId) }}</p>
-        <p><strong>Specialization:</strong> {{ selectedInstructor.specialization }}</p>
-        <p><strong>Is Active:</strong> {{ selectedInstructor.isActive ? 'Yes' : 'No' }}</p>
-        <p><strong>Remarks:</strong> {{ selectedInstructor.remarks }}</p>
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Instructor:</strong> {{ selectedInstructor.employeeName || getEmployeeName(selectedInstructor.employeeId) }}</p>
+            <p><strong>Is Active:</strong> {{ selectedInstructor.isActive ? 'Yes' : 'No' }}</p>
+            <p><strong>Remarks:</strong> {{ selectedInstructor.remarks }}</p>
+          </div>
+          <div class="col-md-6">
+            <h5>Assigned Courses</h5>
+            @if (selectedInstructor.courses && selectedInstructor.courses.length > 0) {
+            <ul class="list-group">
+              @for (course of selectedInstructor.courses; track course.courseId) {
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ course.courseName }}
+              </li>
+              }
+            </ul>
+            } @else {
+            <p class="text-muted">No courses assigned</p>
+            }
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-dark" (click)="closeDetailsModal()">Close</button>

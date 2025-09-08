@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { MoneyReceipt } from '../Models/moneyreceipt';
 import { Invoice } from '../Models/invoice';
 
@@ -13,8 +13,24 @@ export class MoneyReceiptService {
 
   constructor(private http: HttpClient) { }
 
+  //createMoneyReceipt(receipt: MoneyReceipt): Observable<MoneyReceipt> {
+  //  return this.http.post<MoneyReceipt>(`${this.apiUrl}/InsertMoneyReceipt`, receipt);
+  //}
+
+  // In your service
   createMoneyReceipt(receipt: MoneyReceipt): Observable<MoneyReceipt> {
-    return this.http.post<MoneyReceipt>(`${this.apiUrl}/InsertMoneyReceipt`, receipt);
+    const payload = {
+      ...receipt,
+      payableAmount: +receipt.payableAmount,
+      paidAmount: +receipt.paidAmount,
+      dueAmount: +receipt.dueAmount,
+      // Keep the original isFullPayment value from the form
+      isFullPayment: receipt.isFullPayment,
+      receiptDate: new Date(receipt.receiptDate).toISOString()
+    };
+
+    console.log('Final API Payload:', payload);
+    return this.http.post<MoneyReceipt>(`${this.apiUrl}/InsertMoneyReceipt`, payload);
   }
 
   getMoneyReceipts(): Observable<MoneyReceipt[]> {
@@ -22,7 +38,7 @@ export class MoneyReceiptService {
   }
 
   getMoneyReceipt(id: number): Observable<MoneyReceipt> {
-    return this.http.get<MoneyReceipt>(`${this.apiUrl}/${id}`);
+    return this.http.get<MoneyReceipt>(`${this.apiUrl}/GetMoneyReceipt/${id}`);
   }
 
   getInvoices(): Observable<Invoice[]> {
@@ -41,15 +57,27 @@ export class MoneyReceiptService {
     return this.http.get<any>(`${this.apiUrl}/admission-payment-info/${admissionNo}`);
   }
 
-  updateMoneyReceipt(id: number, receipt: MoneyReceipt): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/UpdateMoneyReceipt/${id}`, receipt, {
+  //updateMoneyReceipt(id: number, receipt: MoneyReceipt): Observable<void> {
+  //  return this.http.put<void>(`${this.apiUrl}/UpdateMoneyReceipt/${id}`, receipt, {
+  //    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  //  });
+  //}
+
+  updateMoneyReceipt(id: number, receipt: MoneyReceipt): Observable<MoneyReceipt> {
+    return this.http.put<MoneyReceipt>(`${this.apiUrl}/UpdateMoneyReceipt/${id}`, receipt, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     });
   }
 
+
   // Delete a money receipt
   deleteMoneyReceipt(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/DeleteMoneyReceipt/${id}`);
+  }
+
+  // In money-receipt.service.ts
+  getVisitorPaymentSummary(visitorId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/visitor-payment-summary/${visitorId}`);
   }
 
 }

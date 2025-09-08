@@ -136,15 +136,13 @@
          placeholder="Start typing to search visitors..."
          class="search-input">
 
-  <div class="search-results" *ngIf="visitorSearchTerm && filteredVisitors.length > 0">
-    <div *ngFor="let visitor of filteredVisitors"
+  <div class="search-results" *ngIf="visitorSearchTerm && visitorsFromSearch.length > 0">
+    <div *ngFor="let visitor of visitorsFromSearch"
          class="result-item"
          (click)="selectVisitor(visitor)">
       {{ visitor.visitorName }} - {{ visitor.contactNo }}
     </div>
   </div>
-
-
 </div>
 <div *ngIf="selectedVisitorDetails" class="visitor-details">
   <h3>Visitor Details</h3>
@@ -158,13 +156,36 @@
   </div>
 
   <div class="detail-row">
-    <span class="detail-label">Previous Employees:</span>
-    <span>{{ selectedVisitorDetails.previousEmployees }}</span>
-  </div>
-  <div class="detail-row">
     <span class="detail-label">Current Employee:</span>
-    <span>{{ selectedVisitorDetails.currentEmployee?.employeeName || 'None' }}</span>
+    <span>
+      {{ selectedVisitorDetails.currentEmployee?.employeeName || 'Not assigned' }}
+    </span>
   </div>
+
+  <h4>Assignment History</h4>
+  <div *ngIf="selectedVisitorDetails.assignmentHistory.length > 0; else noHistory">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Employee</th>
+          <th>Notes</th>
+          <th>Assigned By</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of selectedVisitorDetails.assignmentHistory">
+          <td>{{ item.transferDate | date:'medium' }}</td>
+          <td>{{ item.employeeName }}</td>
+          <td>{{ item.notes || '-' }}</td>
+          <td>{{ item.userName }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-template #noHistory>
+    <p>No assignment history found for this visitor</p>
+  </ng-template>
 </div>
 
 

@@ -17,7 +17,7 @@ import { LoginComponent } from './Components/login/login.component'; // LoginCom
 import { RegisterComponent } from './Components/register/register.component'; // RegisterComponent ইম্পোর্ট করুন
 import { PrivacyComponent } from './Components/privacy/privacy.component'; // PrivacyComponent ইম্পোর্ট করুন
 import { BatchComponent } from './Components/batch/batch.component'; // BatchComponent ইম্পোর্ট করুন
-import { ClassroomComponent } from './Components/classroom/classroom.component'; // ClassroomComponent ইম্পোর্ট করুন
+import { ClassRoomComponent } from './Components/classroom/classroom.component'; // ClassroomComponent ইম্পোর্ট করুন
 import { InstructorComponent } from './Components/instructor/instructor.component'; // InstructorComponent ইম্পোর্ট করুন
 import { SlotComponent } from './Components/slot/slot.component'; // SlotComponent ইম্পোর্ট করুন
 import { CommonModule } from '@angular/common';
@@ -34,6 +34,17 @@ import { MoneyReceiptComponent } from './Components/money-receipt/money-receipt.
 import { VisitorAssignmentComponent } from './Components/visitorassignment/visitorassignment.component';
 import { BatchTransferComponent } from './Components/batchtransfer/batchtransfer.component';
 import { DailySalesRecordComponent } from './Components/dailysalesrecord/dailysalesrecord.component';
+import { ClassScheduleComponent } from './Components/class-schedule/class-schedule.component';
+import { DailySalesMonitorComponent } from './Components/dailysalesreport/dailysalesreport.component';
+import { TraineeAttendanceComponent } from './Components/traineeattendance/traineeattendance.component';
+import { AssessmentComponent } from './Components/assessment/assessment.component';
+import { CertificateComponent } from './Components/certificate/certificate.component';
+import { RecommendationComponent } from './Components/recommendation/recommendation.component';
+import { ForgotPasswordComponent } from './Components/forgotpassword/forgotpassword.component';
+import { ResetPasswordComponent } from './Components/resetpassword/resetpassword.component';
+import { RouterModule } from '@angular/router';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -52,7 +63,7 @@ import { DailySalesRecordComponent } from './Components/dailysalesrecord/dailysa
     RegisterComponent, 
     PrivacyComponent, 
     BatchComponent, 
-    ClassroomComponent, 
+    ClassRoomComponent, 
     InstructorComponent, 
     SlotComponent,
     RoleManagementComponent,
@@ -61,18 +72,29 @@ import { DailySalesRecordComponent } from './Components/dailysalesrecord/dailysa
     MoneyReceiptComponent,
     VisitorAssignmentComponent,
     BatchTransferComponent,
-    DailySalesRecordComponent
+    DailySalesRecordComponent,
+    ClassScheduleComponent,
+    DailySalesMonitorComponent,
+    TraineeAttendanceComponent,
+    AssessmentComponent,
+    CertificateComponent,
+    RecommendationComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    CommonModule,
     ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    AppRoutingModule // AppRoutingModule কে imports অ্যারেতে যোগ করুন
+    MatSelectModule,
+    MatAutocompleteModule,
+    AppRoutingModule, // AppRoutingModule কে imports অ্যারেতে যোগ করুন
+    RouterModule
+  
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }], // যদি কোনো সার্ভিস থাকে, সেগুলো এখানে যোগ করুন
   bootstrap: [AppComponent]

@@ -1,5 +1,5 @@
-export interface Classroom {
-  classRoomId: number;
+export interface ClassRoom {
+  classRoomId?: number;
   roomName: string;
   seatCapacity: number;
   location: string;
@@ -9,6 +9,15 @@ export interface Classroom {
   hasSoundSystem: boolean;
   hasInternetAccess: boolean;
   isActive: boolean;
+  remarks?: string;
   additionalFacilities?: string;
-  remarks: string;
+  classRoomCourse_Junction_Tables?: ClassRoomCourseJunction[];
+}
+
+export interface ClassRoomCourseJunction {
+  classRoomCourseId?: number;
+  classRoomId?: number;
+  courseId: number;
+  isAvailable: boolean;
+  courseName?: string; 
 }

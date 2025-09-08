@@ -180,7 +180,7 @@ export class AdmissionComponent implements OnInit {
   }
 
   loadBatches(): void {
-    this.batchService.getActiveBatches().subscribe({
+    this.batchService.getBatches().subscribe({
       next: (batches) => this.batches = batches,
       error: (err) => console.error('Error loading batches', err)
     });
@@ -294,7 +294,7 @@ export class AdmissionComponent implements OnInit {
       admissionDetailsId: [0],
       registrationId: [registration.registrationId, Validators.required],
       batchId: [batchId || null, Validators.required],
-      registrationNo: [registration.registraionNo],
+      registrationNo: [registration.registrationNo],
       traineeName: [registration.traineeName]
     });
 
@@ -365,7 +365,7 @@ export class AdmissionComponent implements OnInit {
 
   getRegistrationNo(registrationId: number): string {
     const registration = this.visitorRegistrations.find(r => r.registrationId === registrationId);
-    return registration ? registration.registraionNo : 'Unknown';
+    return registration ? registration.registrationNo : 'Unknown';
   }
 
   getTraineeName(registrationId: number): string {

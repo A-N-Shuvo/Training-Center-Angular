@@ -1,63 +1,43 @@
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Batch } from '../Models/batch';
-import { environment } from '../../environments/environment.development';
+import { Batch, BatchDto } from '../Models/batch';
+import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class BatchService {
-  private apiUrl = environment.apiBaseUrl;
+  private apiUrl = environment.apiBaseUrl
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
-  http = inject(HttpClient);
+  getBatches(): Observable<BatchDto[]> {
+    return this.http.get<BatchDto[]>(`${this.apiUrl}/Batch/GetBatches`);
+  }
 
-  // Get all batches
-  getAllBatches(): Observable<Batch[]> {
+  getAllBatches() {
     return this.http.get<Batch[]>(`${this.apiUrl}/Batch/GetBatches`);
   }
 
-  // Get active batches only
-  getActiveBatches(): Observable<Batch[]> {
-    return this.http.get<Batch[]>(`${this.apiUrl}/Batch/GetActiveBatches`);
-  }
-
-  // Get single batch by ID
-  getBatchById(id: number): Observable<Batch> {
+  getBatch(id: number): Observable<Batch> {
     return this.http.get<Batch>(`${this.apiUrl}/Batch/GetBatch/${id}`);
   }
 
-  // Create new batch
-  addBatch(batch: Batch): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Batch/InsertBatch`, batch);
+  createBatch(batch: Batch): Observable<Batch> {
+    return this.http.post<Batch>(`${this.apiUrl}/Batch/InsertBatch`, batch);
   }
 
-  // Update existing batch
-  updateBatch(batch: Batch): Observable<any> {
-    return this.http.put(`${this.apiUrl}/Batch/UpdateBatch/${batch.batchId}`, batch);
+  updateBatch(id: number, batch: Batch): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/Batch/UpdateBatch/${id}`, batch);
   }
 
-  // Delete batch
-  deleteBatch(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/Batch/DeleteBatch/${id}`);
+  deleteBatch(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/Batch/DeleteBatch/${id}`);
   }
 
-  // Toggle batch active status
-  toggleBatchStatus(id: number, isActive: boolean): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/Batch/ToggleBatchStatus/${id}`, { isActive });
+  generateBatchName(courseId: number): Observable<string> {
+    return this.http.get<string>(`${this.apiUrl}/Batch/GenerateBatchName/${courseId}`);
   }
-
-  // Get batches by course ID
-  getBatchesByCourseId(courseId: number): Observable<Batch[]> {
-    return this.http.get<Batch[]>(`${this.apiUrl}/Batch/GetBatchesByCourse/${courseId}`);
-  }
-
-  // Get upcoming batches (optional)
-  getUpcomingBatches(): Observable<Batch[]> {
-    return this.http.get<Batch[]>(`${this.apiUrl}/Batch/GetUpcomingBatches`);
-  }
-
-
 }

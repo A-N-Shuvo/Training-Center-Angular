@@ -1,164 +1,99 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
-
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: #252432;
-}
-
-@property --a {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-
 .box {
   position: relative;
-  width: 400px;
-  height: 200px;
-  background: repeating-conic-gradient( from var(--a), #ff2770 0%, #ff2770 5%, transparent 5%, transparent 40%, #ff2770 50% );
-  filter: drop-shadow(0 15px 50px #000);
-  animation: rotating 4s linear infinite;
-  border-radius: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: 0.5s;
-}
-
-  .box:hover {
-    width: 450px;
-    height: 500px;
-  }
-
-@keyframes rotating {
-  0% {
-    --a: 0deg;
-  }
-
-  100% {
-    --a: 360deg;
-  }
-}
-
-.box::before {
-  content: "";
-  position: absolute;
   width: 100%;
-  height: 100%;
-  background: repeating-conic-gradient( from var(--a), #45f3ff 0%, #45f3ff 5%, transparent 5%, transparent 40%, #45f3ff 50% );
-  filter: drop-shadow(0 15px 50px #000);
-  border-radius: 20px;
-  animation: rotating 4s linear infinite;
-  animation-delay: -1s;
-}
-
-.box::after {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  background: #2d2d39;
-  border-radius: 15px;
-  border: 8px solid #25252b;
+  min-height: 100vh;
+  background: #1f1f1f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .login {
-  position: absolute;
-  inset: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  flex-direction: column;
-  background: rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.5);
-  border-bottom: 2px solid rgba(255, 255, 255, 0.5);
-  transition: 0.5s;
-  color: #fff;
-  overflow: hidden;
-}
-
-.box:hover .login {
-  inset: 40px;
-}
-
-.loginBx {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  transform: translateY(126px);
-  gap: 20px;
-  width: 70%;
-  transition: 0.5s;
-}
-
-.box:hover .loginBx {
-  transform: translateY(0px);
+  width: 400px;
+  background: #2e2e2e;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
 }
 
 .loginBx h2 {
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-weight: 600;
+  color: #45f3ff;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-  .loginBx h2 i {
-    color: #ff2770;
-    text-shadow: 0 0 5px #ff2770, 0 0 30px #ff2770;
-  }
-
-.loginBx input {
+.loginBx input[type="text"],
+.loginBx input[type="email"],
+.loginBx input[type="password"] {
   width: 100%;
-  padding: 10px 20px;
-  outline: none;
-  font-size: 1em;
+  padding: 10px 15px;
+  margin: 8px 0;
+  background: #111;
+  border: 1px solid #45f3ff;
   color: #fff;
-  background: rgba(0, 0, 0, 0.1);
-  border: 2px solid #fff;
-  border-radius: 30px;
+  border-radius: 5px;
 }
 
-  .loginBx input::placeholder {
-    color: #999;
-  }
+.loginBx input[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background: #45f3ff;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-weight: bold;
+}
 
-  .loginBx input[type="submit"] {
-    background: #45f3ff;
-    border: none;
-    font-weight: 500;
-    color: #111;
-    cursor: pointer;
-    transition: 0.5s;
+  .loginBx input[type="submit"]:disabled {
+    background: #888;
+    cursor: not-allowed;
   }
-
-    .loginBx input[type="submit"]:hover {
-      box-shadow: 0 0 10px #45f3ff, 0 0 60px #45f3ff;
-    }
 
 .group {
   display: flex;
-  width: 100%;
   justify-content: space-between;
+  margin-top: 15px;
+ 
 }
 
   .group a {
-    color: #fff;
+    color: #45f3ff;
     text-decoration: none;
+    font-size: 0.9em;
+    cursor: pointer;
+    text-decoration: underline;
   }
 
-    .group a:nth-child(2) {
-      color: #ff2770;
-      font-weight: 600;
-    }
+.error {
+  color: #ff2770;
+  font-size: 0.8em;
+  margin-top: -5px;
+  margin-bottom: 5px;
+}
+
+.success {
+  color: #45f3ff;
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+.password-wrapper {
+  position: relative;
+}
+
+  .password-wrapper input {
+    width: 100%;
+    padding-right: 40px;
+  }
+
+.toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.1em;
+  color: #888;
+}

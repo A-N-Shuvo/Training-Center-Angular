@@ -84,4 +84,9 @@ export class AdmissionService {
   getAllAdmissionNos(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/numbers`);
   }
+
+  // Add this to your admission.service.ts
+  getAdmissionsByVisitors(visitorId: number): Observable<Admission[]> {
+    return this.http.get<Admission[]>(`${this.apiUrl}/Admission/by-visitor/${visitorId}`);
+  }
 }
